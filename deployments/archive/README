@@ -1,0 +1,17 @@
+################################################################################
+# 6. Archive Directory
+################################################################################
+
+As part of the process of baselining, files will be migrated to the archive
+directory.  I suppose over time we may want to purge files from the archive.  
+There is no automated method to do this.  Before purging I would make sure that
+all instances and developers are up to date before permanently removing files
+from here.  
+
+Personally I think items older than 12 months may be good to purge to keep the 
+directory size smaller.  We are using a versioning control system, so the files
+are nevery actually gone.  Purging is done to make the directory not
+overwhelming to look through from a human perspective as well as to not allow
+so many files that the file system may begin to have trouble listing the 
+directory.
+

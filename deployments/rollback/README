@@ -1,0 +1,13 @@
+################################################################################
+# 4. Rollback
+################################################################################
+
+Most changes should contain a rollback.  Some exceptions may be 
+made to this, such as when you use a rollback, the rollback of a 
+rollback is the original change.  There may also be pre-approved
+changes that are so standard or reference stored proceedures that
+a rolback is not required.
+
+Rollback's should be named the same as the file they are referencing
+in the changes directory.
+

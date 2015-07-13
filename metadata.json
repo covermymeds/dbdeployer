@@ -1,0 +1,17 @@
+{
+  "name": "dbdeployer",
+  "version": "0.1.0",
+  "author": "CoverMyMeds",
+  "license": "MIT",
+  "summary": "Manage Database Deployments",
+  "source": "https://github.com/covermymeds/dbdeployer",
+  "project_page": "https://github.com/covermymeds/dbdeployer",
+  "issues_url": "https://github.com/covermymeds/dbdeployer/issues",
+  "tags": ["dbdeployer", "postgres", "postgresql", "mysql", "sql server", "mssql", "sqlcmd", "database"],
+  "operatingsystem_support": [
+    { "operatingsystem":"RedHat", "operatingsystemrelease":[ "6", "7" ] }
+  ],
+  "dependencies": [
+    { "name": "bash", "version_requirement": "2.x" }
+  ]
+}

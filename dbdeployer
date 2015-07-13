@@ -1,0 +1,682 @@
+#!/usr/bin/env bash
+
+#script needs at a minimum 1 parameter, if less than that are passed, show usage
+if [ $# -eq 0 ]
+then
+	show_help='true'
+fi
+
+#seting up autoloader function that isn't included in directories that are auto-loaded
+load_functions_in_dirs() {
+  
+  #set functiondirs to string passed in
+  _functiondirs=$1
+  rc=0
+  IFS='|' read -a _load_dirs <<< "${_functiondirs}"
+  for _load_dir in ${_load_dirs[@]}
+  do
+    if [ -d "${_load_dir}" ]
+    then
+      #search for all .sh files and source them
+      for sourcefile in `find "${_load_dir}" -type f -name '*.sh' | xargs`
+      do
+        source "${sourcefile}"
+        if [ $? -ne 0 ]
+        then
+          rc=1
+        fi
+      done
+    else
+      #directory was not found or didn't exist
+      rc=1
+    fi
+  done
+  unset _load_dir
+  unset _functiondirs
+  if [ ${rc} -eq 0 ]
+  then
+    unset rc
+    return 0
+  else
+    unset rc
+    return 1
+  fi
+
+}
+
+#load defaults
+source /etc/dbdeployer/config.sh
+if [ $? -ne 0 ]
+then
+  echo "Failed to source defaults file. Verify directory exists and permissions"
+  echo "readable on /etc/dbdeployer directory"
+  exit 1
+fi
+
+#overwrite defaults with homedir file 
+if [ -f ~/.dbdeployer ]
+then
+  source ~/.dbdeployer
+fi
+
+###################################
+#  get options
+###################################
+
+while test $# -gt 0
+do
+  case "${1}" in
+    -A|--run-as)
+      shift
+      run_as=${1}
+      shift
+      ;;
+    -c|--confirm)
+      confirm='true' 
+      shift
+      ;;
+    -d|--database)
+      shift
+      _dbname=${1}
+      shift
+      ;;
+    -D|--database-dir)
+      shift
+      db_basedir=${1}
+      shift
+      ;;
+    -e|--environment)
+      shift
+      environment=${1}
+      environment_flag="-e ${environment}"
+      shift
+      ;;
+    -f|--file)
+      shift
+      file_path=${1}
+      shift
+      ;;
+    -h|--help)
+      show_help='true'
+      shift
+      ;;
+    -k|--skip)
+      skip='true'
+      skip_cli='-k' 
+      shift
+      ;;
+    -p|--port)
+      shift
+      port="${1}"
+      port_cli="-p ${port}" 
+      shift
+      ;;
+    -P|--password)
+      shift
+      password="${1}"
+      password_cli="-P ${password}" 
+      shift
+      ;;
+    -r|--report)
+      report='true' 
+      shift
+      ;;
+    -R|--change-control)
+      shift
+      export change_control="${1}" 
+      shift
+      ;;
+    -s|--server)
+      shift
+      server="${1}"
+      server_cli="-s ${server}"
+      shift
+      ;;
+    -T|--dbtype)
+      shift
+      dbtype="${1}"
+      shift
+      ;;
+    -U|--user)
+      shift
+      dbuser="${1}"
+      dbuser_cli="-U ${dbuser}" 
+      shift
+      ;;
+    -u|--update)
+      current='true' 
+      shift
+      ;;
+    -v|--verbose)
+      verbose='true' 
+      shift
+      ;;
+    -X|--drop-and-reload)
+      drop_reload='true'
+      shift
+      ;;
+    *)
+      shift
+      show_help='true'
+      shift
+      ;;
+  esac
+done
+############################################
+#  set some other dynamicly loaded variables
+############################################
+
+#autoload various files
+load_functions_in_dirs "${fn_basedir}/functions|${fn_basedir}/dbtype/${dbtype}"
+
+set_db_binary
+
+if [ $? -ne 0 ]
+then
+  echo "Failed to load some of the functions.  Please verify the 'dbtype' specified"
+  echo "in the configuration file is correct, exiting"
+  exit 1
+fi
+
+script_name=`basename $0`
+deployed_by="`who am i | awk {'print $1'}`"
+deployed_as="`whoami`"
+
+
+#################################
+#  Show help if necessary
+#################################
+
+if [ "${show_help}" = 'true' ]
+then
+  usage
+  exit 1
+fi
+
+###########################################
+#  check logic of flags and override values
+###########################################
+
+#verify if running as the run_as user, if yes, then no sudo actions needed, if no, use sudo
+if ! [ -z ${run_as} ]
+then
+  check_run_as
+  if [ $? -ne 0 ]
+  then
+    echo "Unable to run things as the \"run_as\" user \"${run_as}\", exiting"
+    exit 1
+  fi
+fi
+
+if test ! -d "${fn_basedir}/dbtype/${dbtype}"
+then
+  echo "${dbtype} dbtype specified doesn't exist"
+  exit 1
+fi
+
+#check if db_binary is found
+which ${db_binary} > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+  echo "${db_binary} binary not found"
+  exit 1
+fi
+
+#override variables from file path if file_path exists
+if ! [ -z "${file_path}" ]
+then
+
+  #require files to have full path
+  if [[ ${file_path:0:1} != "/" ]] 
+  then 
+    echo "File paths that are passed in must be absolute/full paths. Consider"
+    echo "running a report and letting the tool generate the commands to run"
+    echo "for you."
+    exit 1
+  fi
+
+  IFS='/' file_array=(${file_path})
+  array_count=`echo ${#file_array[@]}` 
+  if [ ${array_count} -gt 2 ]
+  then
+    array_index=`expr "${array_count}" - "1"`
+    filename=${file_array[${array_index}]}
+
+    array_index=`expr "${array_count}" - "2"`
+    change_type=${file_array[${array_index}]}
+
+    array_index=`expr "${array_count}" - "3"`
+    dbname=${file_array[${array_index}]}
+
+    array_index=`expr "${array_count}" - "4"`
+    db_basedir='/' #initialize as slash requireing full path
+    for ((i=1; i<=${array_index}; i++))
+    do
+      db_basedir="${db_basedir}/${file_array[${i}]}"
+    done
+
+  else
+    echo "I couldn't find enough pieces of the path to gather all of the information I needed. Please"
+    echo "make sure to include either the full path to the file, or at least the path to the file from"
+    echo "the dbdeployer script.  Please note, if you are using environments, you should not link to"
+    echo "the environment file, but rather the file with the same name in the type of deployment folder"
+    echo "you are referencing."
+    exit 1
+  fi
+
+fi #end if file_path
+
+#validate reference/change control url if provided
+if ! [ -z ${change_control} ]
+then
+  if ! [[ ${change_control} =~ ${url_regex} ]]
+  then
+    echo "The reference URL provided does not appear to be a valid URL, exiting"
+    exit 1
+  fi
+fi
+
+
+#check that host/server responds to pings
+if ! [ -z "${server}" ]
+then
+	check_server_ping
+	if [ $? -ne 0 ]
+	then
+		exit 1
+	fi
+  set_server_flags
+fi
+
+#check that host/server responds to pings
+if ! [ -z "${password}" ]
+then
+  
+  if [ -z "${dbuser}" ]
+  then
+    echo "Password can only be specified with username"
+    exit 1
+  fi
+
+  set_password_flags
+fi
+
+#setup user if it is passed in
+if ! [ -z "${dbuser}" ]
+then
+  deployed_as="${dbuser}"
+  set_user_flags
+fi
+
+#setup port if it is passed in
+if ! [ -z "${port}" ]
+then
+  #can't have a port without a server, server validation done above
+  if [ -z "${server}" ]
+  then
+    echo "You must specify a server if you specify a port"
+    exit 1
+  fi
+
+	check_server_port
+	if [ $? -ne 0 ]
+	then
+		exit 1
+	fi
+
+  set_port_flags
+fi
+
+#if -d exists, overwrite database name
+if ! [ -z "${_dbname}" ]
+then 
+	dbname="${_dbname}"
+fi
+
+
+#deployments database should already exist even if it is empty, verify it does
+db_exists "${deployment_db}"
+if [ $? -ne 0 ]
+then
+  echo "${deployment_db} database does not exist or you do not have permission to acces it, exiting."
+  exit 1
+fi
+
+#check flags with drop and reload
+if [ "${drop_reload}" = "true" ]
+then
+  #is drop and reload allowed on this server
+  if [ "${allow_drop_and_reload}" != 'true' ]
+  then
+    echo "The configuration file has the option to allow drop and reload disabled, exiting"
+    exit 1
+  fi
+	#check report
+  if [ "${report}" = "true" ]
+	then
+		echo "The report flag is not compatible with the drop and reload flag."
+		exit 1
+	fi
+  #check skip
+  if [ "${skip}" = "true" ]
+  then
+    echo "The skip flag is not compatible with the drop and reload flag."
+    exit 1
+  fi
+  #check that dbname is set
+	if [ -z "${dbname}" ]
+	then
+		echo "You must specify the database you want to drop and reload (-d|--database)"
+		exit 1
+	fi
+  #check that dbname is not deployments database
+  if [ "${deployment_db}" = "${dbname}" ]
+  then
+    echo "You can not drop and reload the deployment tracking database"
+    exit 1
+  fi
+fi
+
+#check report has a database passed in
+if [ "${report}" = "true" ]
+then
+	#check database
+	if [ -z "${dbname}" ]
+	then
+		echo "You must specify the database you want to run a report against if you specify that a report be run (-r|--report)"
+		exit 1
+	fi
+fi
+
+#very that we have a database passed or calculated or exit
+if [ -z "${dbname}" ]
+then
+	echo "A database name was not specified and could not be found by the file path specified.  Please add a"
+	echo "database declaration or file to the command so we know what to deploy."
+	exit 1
+fi
+
+
+#verify the database exist in the file system
+if ! [ -d "${db_basedir}/${dbname}" -o -h "${db_basedir}/${dbname}" ]
+then
+  echo "The database name you specified is not currently being managed via the filesystem"
+  echo "${db_basedir}/${dbname}"
+  exit 1
+else
+  IFS='|' read -a folder_list <<< "${deployment_folders}"
+  for x in ${folder_list[@]}
+  do
+    if ! [ -d "${db_basedir}/${dbname}/${x}" ]
+    then
+      echo "The database name '${dbname} that was passed or derived from the path exists"
+      echo "on the filesystem but does not have all of the supporting folders required."
+      exit 1
+    fi
+  done
+  unset x
+fi
+
+#make sure file flag is not passed with current flag
+if [ "${current}" = 'true' ]
+then
+  if ! [ -z "${file_path}" ]
+  then
+    echo "You can not specify a file and the current flag together.  Please specify current and a database with an optional "
+    echo "environment, or just the file flag with the path to the file."
+    exit 1
+  fi
+fi
+
+
+#check environment variable
+if ! [ -z ${environment} ]
+then
+  if test -f "${db_basedir}/${dbname}/${change_type}/${environment}/${filename}"
+  then
+    file_path="${db_basedir}/${dbname}/${change_type}/${environment}/${filename}"
+  elif test -f "${db_basedir}/${dbname}/${change_type}/${environment}/${filename}"
+  then
+    file_path="${db_basedir}/${dbname}/${change_type}/${environment}/${filename}"
+  fi
+
+  environment_count=0
+#environment variable not passed
+else
+  environment_count=`ls -R "${db_basedir}/${dbname}/" | grep ":" | grep -v -E "${env_exclude}" | wc -l`
+    
+fi
+
+#check if we need an zenvironment variable or not, if environments exist for the db, then we need the specific environment to work with
+if [ ${environment_count} -gt 0 ]
+then
+  echo "You did not specify an environment, but environments were found on the database you are trying to deploy."
+  echo "Please specify your environment with a -e flag.  Environments found were:"
+  echo 
+  ls -R "${db_basedir}/${dbname}" | grep ":" | grep -v -E "${env_exclude}"
+  exit 1
+fi
+
+#checks verbosity
+if ! [ -z ${verbose} ]
+then
+	if [ "${verbose}" = 'true' ]
+	then
+		echo "
+    file_dir: ${file_dir}
+    file_path_dirs: ${file_path_dirs}
+    array_count: ${array_count} 
+    file_path: ${file_path} 
+    filename: ${filename}
+    change_type: ${change_type}
+    dbname: ${dbname}
+    report: ${report}
+    port: ${port}
+    dbuser: ${dbuser}
+    server: ${server}
+    verbose: ${verbose}
+    current: ${current}
+    script_name: ${script_name}
+    environment: ${environment}
+    environment_count: ${environment_count}
+    confirm: ${confirm}
+    skip: ${skip}
+    drop-and-reload: ${drop_reload}
+    db_basedir: ${db_basedir}
+    fn_basedir: ${fn_basedir}
+    run_as: ${run_as}
+    deployed_by: ${deployed_by}
+    deployed_as: ${deployed_as}
+    "
+	fi
+fi
+
+###################################
+#  additional error checking
+###################################
+
+
+#check that database exists if dbname is defined and offer to create if its not
+if ! [ -z "${dbname}" ]
+then
+  db_exists "${dbname}"
+	if [ $? -ne 0 ]
+  then
+		echo "${dbname} database does not exist, Do you want to create it?"
+		if [ "${confirm}" = 'true' ]
+		then
+			echo "Confirm flag is set, creating automatically..."
+			create_database "${dbname}"
+		else
+	
+			select yn in "Yes" "No"; do
+				case ${yn} in
+						Yes ) create_database "${dbname}"; break;;
+						No ) exit;;
+				esac
+			done
+		fi # end confirm
+		
+	fi # end database exists
+fi # end variable empty check
+
+#check that the file filepath is set and that the file exists
+if ! [ -z "${file_path}" ]
+then
+  if test ! -f "${file_path}"
+  then
+    echo "The file for deployment does not exist"
+    exit 1
+  fi
+
+  #check to see if this has already been deployed on the server
+  deployed_check 
+  if [ $? -ne 0 ]
+  then
+    show_deployments
+
+    #confirm
+    echo "This file was already found to have been deployed.  Would you like to redeploy?"
+    if [ "${confirm}" = 'true' ]
+    then
+      echo "Confirm flag is set, allow redeployment of this file..."
+    else
+
+      select yn in "Yes" "No"; do
+        case ${yn} in
+            Yes ) echo "You have chosen to redeploy this file"; break;;
+            No ) exit;;
+        esac
+      done
+    fi # end confirm
+  fi # end deployed_check
+fi # end file path exists check
+
+if test ! -d "${db_basedir}/${dbname}/${change_type}/output"
+then
+  echo "output directory doesn't exist, creating..."
+  mkdir -p "${db_basedir}/${dbname}/${change_type}/output"
+
+
+  if [ $? -ne 0 ]
+  then
+    echo "failed to create output directory, exiting"
+    exit 1
+  fi
+  
+fi
+
+#setup logfile variable 
+logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
+if [ -f "${logfile}" ]
+then
+
+  if ! [ -z ${verbose} ]
+  then
+    echo "output file already exists, automatically appending to existing file"
+  fi
+
+  if test ! -w "${logfile}"
+  then
+    echo "Could not write to log file ${logfile}, exiting"
+    exit 1
+  fi
+fi
+
+
+###################################
+#  main
+###################################
+
+#already know we have report and db, so execute report now
+if [ "${report}" == 'true' ]
+then
+  deployment_report
+fi
+
+#already validated drop and reload, execute now
+if [ "${drop_reload}" = "true" ]
+then
+
+  #confirm
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE!"
+  echo "Are you sure you want to continue?"
+  if [ "${confirm}" = 'true' ]
+  then
+    echo "Confirm flag is set, dropping database for reload..."
+    drop_and_reload ${dbname}
+  else
+
+    select yn in "Yes" "No"; do
+      case ${yn} in
+          Yes ) drop_and_reload ${dbname}; break;;
+          No ) exit;;
+      esac
+    done
+  fi # end confirm
+
+
+
+  drop_and_reload ${dbname}
+  if [ $? -ne 0 ]
+  then
+    echo "Something failed when trying to drop and reload the database"
+    exit 1
+  fi
+fi
+
+#already validated all filepath stuff, execute query
+if ! [ -z "${file_path}" ]
+then
+  log_header "${logfile}"
+
+  if [ $? -ne 0 ] 
+  then
+    echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
+    exit 1
+  fi
+
+	if [ "${skip}" = "true" ]
+  then
+    state='SKIP'
+  else
+    deploy_file "${file_path}" "${logfile}"
+    rc=$?
+    if [ ${rc} = 0 ]
+    then
+      state='OK'
+    else
+      state='FAIL'
+    fi
+  fi
+  log_footer "${logfile}"
+  if [ $? -ne 0 ] 
+  then
+    echo "WARNING: Unable to write footer to log file ${logfile}."
+  fi
+
+  log_deployment "${dbname}" "${change_type}" "${filename}" "${state}"
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to log deployment, please manually log or mark as skipped to prevent redeployment"
+    exit 1
+  fi
+
+  if [ "${state}" = 'FAIL' ] 
+  then
+    echo "Failed to deploy ${file_path}"
+    exit 1
+  fi
+
+fi
+
+#run the report to get what needs deployed and then deploy it
+if [ "${current}" = "true" ]
+then
+  update_db_to_current "${dbname}"
+  if [ $? -ne 0 ]
+  then
+    echo "One of the files did not deploy correctly.  No files past that file have been deployed"
+    exit 1
+  fi
+fi

@@ -1,0 +1,36 @@
+################################################################################
+# 3. Changes
+################################################################################
+
+
+This folder should contain updates or changes to the schema 
+and seed data forthe database.  Multiple changes can be in a 
+single file, but all changes must be additive.  This means 
+that there is never a rollback and redeploy.  A rollback 
+would be executed as an update, and the re-deployment as yet
+another update. Rollbacks should still be created for 
+changes written and should be stored in the rollbacks directory
+even though if they are used they will be added into the 
+changes directory as a new file.
+
+Deploying updates in an additive fashion allows any developer
+to check out the database and not worry about their checkout
+being invalidated.
+
+Files here should be named with the date in format:
+YYYYMMDD-[XX-][description_of_change].sql
+
+where YYYY is the 4 digit year, MM is the 2 digit month, DD is
+the 2 digit day
+
+XX- is an optional argument that can be used if there are more than
+one script associated with a change.  The numbers should be incrmental
+ordering the scripts in an alpha sort. 
+
+The description should not have any spaces in it.  Instead underscores 
+should be used.
+
+When changes are baselined, they are moved to the archive
+direcotry and their contents are merged into the correct schema 
+or seed data file.
+
