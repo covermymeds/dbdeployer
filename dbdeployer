@@ -552,37 +552,39 @@ then
   fi # end deployed_check
 fi # end file path exists check
 
-if test ! -d "${db_basedir}/${dbname}/${change_type}/output"
+#don't log files for deployments db
+if [ "${dbname}" != "${deployments_db}" ]
 then
-  echo "output directory doesn't exist, creating..."
-  mkdir -p "${db_basedir}/${dbname}/${change_type}/output"
-
-
-  if [ $? -ne 0 ]
+  if test ! -d "${db_basedir}/${dbname}/${change_type}/output"
   then
-    echo "failed to create output directory, exiting"
-    exit 1
+    echo "output directory doesn't exist, creating..."
+    mkdir -p "${db_basedir}/${dbname}/${change_type}/output"
+
+
+    if [ $? -ne 0 ]
+    then
+      echo "failed to create output directory, exiting"
+      exit 1
+    fi
   fi
-  
+
+  #setup logfile variable 
+  logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
+  if [ -f "${logfile}" ]
+  then
+
+    if ! [ -z ${verbose} ]
+    then
+      echo "output file already exists, automatically appending to existing file"
+    fi
+
+    if test ! -w "${logfile}"
+    then
+      echo "Could not write to log file ${logfile}, exiting"
+      exit 1
+    fi
+  fi
 fi
-
-#setup logfile variable 
-logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
-if [ -f "${logfile}" ]
-then
-
-  if ! [ -z ${verbose} ]
-  then
-    echo "output file already exists, automatically appending to existing file"
-  fi
-
-  if test ! -w "${logfile}"
-  then
-    echo "Could not write to log file ${logfile}, exiting"
-    exit 1
-  fi
-fi
-
 
 ###################################
 #  main
@@ -628,15 +630,20 @@ fi
 #already validated all filepath stuff, execute query
 if ! [ -z "${file_path}" ]
 then
-  log_header "${logfile}"
 
-  if [ $? -ne 0 ] 
-  then
-    echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
-    exit 1
+  #don't log deployments to file for deployments database
+  if [ "${deployment_db}" != "${dbname}" ]
+  then 
+    log_header "${logfile}"
+
+    if [ $? -ne 0 ] 
+    then
+      echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
+      exit 1
+    fi
   fi
 
-	if [ "${skip}" = "true" ]
+  if [ "${skip}" = "true" ]
   then
     state='SKIP'
   else
@@ -649,10 +656,14 @@ then
       state='FAIL'
     fi
   fi
-  log_footer "${logfile}"
-  if [ $? -ne 0 ] 
-  then
-    echo "WARNING: Unable to write footer to log file ${logfile}."
+  
+  if [ "${deployment_db}" != "${dbname}" ]
+  then 
+    log_footer "${logfile}"
+    if [ $? -ne 0 ] 
+    then
+      echo "WARNING: Unable to write footer to log file ${logfile}."
+    fi
   fi
 
   log_deployment "${dbname}" "${change_type}" "${filename}" "${state}"
