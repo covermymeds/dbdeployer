@@ -6,6 +6,7 @@ db_report_string() {
   SELECT '${db_basedir}/' + dbname + '/' + deployment_type + '/' + deployment_name
   FROM deployment_tracker
   WHERE dbname = '${dbname}'
+  AND isnull(is_active, 0)=1
   AND deployment_type = '${_deployment_type}'
   AND deployment_outcome in ('OK','SKIP');" | sort -rn
 
