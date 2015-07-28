@@ -4,7 +4,7 @@ function deployed_check() {
   and ( deployment_outcome = 'OK' OR deployment_outcome = 'SKIP' )
   and deployment_type = '${change_type}'
   and deployment_name = '${filename}'
-  and isnull(is_active, 1)=0
+  and isnull(is_active, 0)=1
   group by deployment_name), 0 );" | xargs` -eq 0 ]
   then
     return 0
