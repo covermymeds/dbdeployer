@@ -553,7 +553,7 @@ then
 fi # end file path exists check
 
 #don't log files for deployments db
-if [ "${dbname}" != "${deployments_db}" ]
+if [ "${dbname}" != "${deployment_db}" ]
 then
   if test ! -d "${db_basedir}/${dbname}/${change_type}/output"
   then

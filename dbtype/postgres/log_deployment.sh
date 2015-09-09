@@ -14,7 +14,7 @@ function log_deployment() {
     deployment_name , 
     deployment_outcome"
 
-    if [ "${_deploy_db}" != "${deployments_db}" ]
+    if [ "${_deploy_db}" != "${deployment_db}" ]
     then
       _query_string="${_query_string},
       deployed_by,
@@ -31,7 +31,7 @@ function log_deployment() {
     '${_state}'
     "
     
-    if [ "${_deploy_db}" != "${deployments_db}" ]
+    if [ "${_deploy_db}" != "${deployment_db}" ]
     then
       _query_string="${_query_string},
       '${deployed_by}',
