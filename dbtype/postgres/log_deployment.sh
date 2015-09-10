@@ -48,6 +48,8 @@ function log_deployment() {
   unset _filename
   unset _state
   unset _query_string
+  unset _additional_fields
+  unset _additional_values
 
   if [ ${rc} -eq 0 ] 
   then
