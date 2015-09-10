@@ -21,4 +21,5 @@ begin
   deployment_tracker set updated_at = getdate() from inserted i where i.id=deployment_tracker.id
 end
 
+CREATE INDEX index_deployment_on_deployment_name ON deployment_tracker (deployment_name);
 
