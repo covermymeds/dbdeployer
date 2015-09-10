@@ -5,6 +5,20 @@ function log_deployment() {
   _change_type="$2"
   _filename="$3"
   _state="$4"
+  _additional_fields=''
+  _additonal_values=''
+
+  if [ "${_deploy_db}" != "${deployment_db}" ]
+  then
+    _additional_fields=",
+    deployed_by,
+    deployed_as,
+    reference_url"
+    _additional_values=",
+    '${deployed_by}',
+    '${deployed_as}',
+    '${change_control}'"
+  fi
 
   _query_string="
   insert into deployment_tracker 
@@ -12,16 +26,8 @@ function log_deployment() {
     dbname, 
     deployment_type , 
     deployment_name , 
-    deployment_outcome"
-
-    if [ "${_deploy_db}" != "${deployment_db}" ]
-    then
-      _query_string="${_query_string},
-      deployed_by,
-      deployed_as,
-      reference_url"
-    fi
-  _query_string="${_query_string}
+    deployment_outcome
+    $_additional_fields
   )
   values 
   ( 
@@ -29,17 +35,7 @@ function log_deployment() {
     '${_change_type}', 
     '${_filename}', 
     '${_state}'
-    "
-    
-    if [ "${_deploy_db}" != "${deployment_db}" ]
-    then
-      _query_string="${_query_string},
-      '${deployed_by}',
-      '${deployed_as}',
-      '${change_control}'"
-    fi
-
-  _query_string="${_query_string}
+    $_additional_values
   )
   ;"
 
