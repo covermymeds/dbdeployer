@@ -53,6 +53,7 @@ CREATE SEQUENCE deployment_tracker_id_seq
 
 ALTER SEQUENCE deployment_tracker_id_seq OWNED BY deployment_tracker.id;
 
+CREATE INDEX index_deployment_on_deployment_name ON deployment_tracker USING btree (deployment_name);
 
 CREATE TRIGGER update_updated_at_modtime BEFORE UPDATE ON deployment_tracker FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
