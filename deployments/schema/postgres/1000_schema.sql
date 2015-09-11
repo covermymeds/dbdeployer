@@ -57,7 +57,7 @@ CREATE INDEX index_deployment_on_deployment_name ON deployment_tracker USING btr
 
 CREATE TRIGGER update_updated_at_modtime BEFORE UPDATE ON deployment_tracker FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
-
+ALTER TABLE ONLY deployment_tracker ALTER COLUMN id SET DEFAULT nextval('deployment_tracker_id_seq'::regclass);
 --
 -- PostgreSQL database dump complete
 --
