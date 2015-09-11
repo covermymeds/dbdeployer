@@ -2,18 +2,10 @@
 db_report_string() {
   _deployment_type="$1"
 
-  _table_exists=`${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -A -t -c "
-  SELECT EXISTS (
-    SELECT 1 
-    FROM   pg_catalog.pg_class c
-    JOIN   pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-    WHERE  n.nspname = 'public'
-    AND    c.relname = 'deployment_tracker'
-    AND    c.relkind = 'r'    -- only tables(?)
-  );"`
+  deployment_tracker_table_exists
 
-  if [ "${_table_exists}" = 't' ]
-  then 
+  if [ $? -eq 0 ]
+  then
   
     ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -A -t -c "
     SELECT CONCAT('${db_basedir}/',dbname,'/',deployment_type,'/',deployment_name) 
@@ -38,7 +30,6 @@ db_report_string() {
     fi
   fi
 
-  unset _table_exists
   unset _deployment_type
 
   return ${return_val}

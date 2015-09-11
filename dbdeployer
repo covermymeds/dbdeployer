@@ -531,7 +531,15 @@ then
 
   #check to see if this has already been deployed on the server
   deployed_check 
-  if [ $? -ne 0 ]
+  rc=$?
+  if [ $rc -eq 2 ]
+  then
+    #deployments database doesn't have deployment tracker table
+    echo "The deployments database doesn't contain the table 'deployment_tracker'."
+    echo "Please run the below command to install the table and its dependencies:"
+    echo "  dbdeployer -D /var/lib/dbdeployer -d deployments -u"
+    exit 1
+  elif [ $rc -ne 0 ]
   then
     show_deployments
 
