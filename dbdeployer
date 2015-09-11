@@ -267,9 +267,9 @@ then
 fi #end if file_path
 
 #validate reference/change control url if provided
-if ! [ -z ${change_control} ]
+if ! [ -z "${change_control}" ]
 then
-  if ! [[ ${change_control} =~ ${url_regex} ]]
+  if ! [[ "${change_control}" =~ "${url_regex}" ]]
   then
     echo "The reference URL provided does not appear to be a valid URL, exiting"
     exit 1
