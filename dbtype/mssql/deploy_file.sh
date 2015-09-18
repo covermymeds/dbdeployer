@@ -1,14 +1,16 @@
 function deploy_file() {
-  _deploy_file="$1"
-  _logfile="$2"
-
+  _deploy_file="${1}"
+  # ${2} is the name of log file, which is optional
 
   deploy_output=$(${db_binary} -d ${dbname} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql "$_deploy_file" "${fn_basedir}"/dbtype/"$dbtype"/post_deploy.sql)
   rc=$?
 
   echo "${deploy_output}"
 
-  echo "${deploy_output}" >> "${_logfile}" 
+  if ! [ -z ${2} ]
+  then 
+    echo "${deploy_output}" >> "${2}" 
+  fi
 
   if [[ $deploy_output == *"SqlState 24000, Invalid cursor state"* ]]
   then
@@ -20,7 +22,6 @@ function deploy_file() {
   fi
 
   unset _deploy_file
-  unset _logfile
 
   if [ ${rc} -eq 0 ]
   then
