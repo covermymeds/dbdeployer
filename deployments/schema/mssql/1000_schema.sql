@@ -1,9 +1,9 @@
 CREATE TABLE deployment_tracker (
     id integer IDENTITY,
-    dbname text,
-    deployment_type text NOT NULL,
-    deployment_name text,
-    deployment_outcome text,
+    dbname varchar(128),
+    deployment_type varchar(128) NOT NULL,
+    deployment_name varchar(1024),
+    deployment_outcome varchar(32),
     created_at DATETIME DEFAULT (getdate()),
     updated_at DATETIME DEFAULT (getdate()),
     is_active bit DEFAULT 1,
