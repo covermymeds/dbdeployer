@@ -6,13 +6,13 @@ CREATE TABLE deployment_tracker (
     deployment_outcome text,
     created_at DATETIME DEFAULT (getdate()),
     updated_at DATETIME DEFAULT (getdate()),
-    is_active boolean DEFAULT true,
+    is_active bit DEFAULT 1,
     deployed_by character varying(32),
     deployed_as character varying(32),
     reference_url text
 );
 
-
+go 
 create trigger update_updated_at_column on dbo.deployment_tracker
 AFTER update
 as
