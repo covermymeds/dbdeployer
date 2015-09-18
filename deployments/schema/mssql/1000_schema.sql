@@ -12,7 +12,7 @@ CREATE TABLE deployment_tracker (
     reference_url text
 );
 
-
+go 
 create trigger update_updated_at_column on dbo.deployment_tracker
 AFTER update
 as
