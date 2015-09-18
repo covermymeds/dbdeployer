@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function deploy_file() {
-  _deploy_file="$1"
-  if [ -z "$2" ]
+  _deploy_file="${1}"
+  if [ -z ${2} ]
   then 
     _logfile="-L ${2}"
   fi
