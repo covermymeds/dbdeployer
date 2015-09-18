@@ -6,7 +6,7 @@ deployment_tracker_table_exists() {
   if OBJECT_ID('deployments.dbo.deployment_tracker') is not NULL
   select 't';"`
 
-  if [ "$_table_exists" = 't' ]
+  if [ "${_table_exists}" = 't' ]
   then
     return 0
   else
