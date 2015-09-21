@@ -198,7 +198,7 @@ fi
 ###########################################
 
 #verify if running as the run_as user, if yes, then no sudo actions needed, if no, use sudo
-if ! [ -z ${run_as} ]
+if ! [ -z "${run_as}" ]
 then
   check_run_as
   if [ $? -ne 0 ]
