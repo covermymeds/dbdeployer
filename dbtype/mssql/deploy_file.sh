@@ -7,7 +7,7 @@ function deploy_file() {
 
   echo "${deploy_output}"
 
-  if ! [ -z ${2} ]
+  if ! [ -z "${2}" ]
   then 
     echo "${deploy_output}" >> "${2}" 
   fi
