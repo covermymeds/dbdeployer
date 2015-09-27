@@ -8,6 +8,6 @@ rollback is the original change.  There may also be pre-approved
 changes that are so standard or reference stored proceedures that
 a rolback is not required.
 
-Rollback's should be named the same as the file they are referencing
-in the changes directory.
+Rollback's should have the exact same name as the file they are referencing
+in the changes directory. 
 

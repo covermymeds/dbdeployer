@@ -4,14 +4,19 @@
 
 
 This folder should contain updates or changes to the schema 
-and seed data forthe database.  Multiple changes can be in a 
+and seed data for the database.  Multiple changes can be in a 
 single file, but all changes must be additive.  This means 
-that there is never a rollback and redeploy.  A rollback 
-would be executed as an update, and the re-deployment as yet
-another update. Rollbacks should still be created for 
+that there should never be a rollback and redeploy.  A rollback 
+would be executed as a change, and the re-deployment as yet
+another change. Rollbacks should still be created for 
 changes written and should be stored in the rollbacks directory
 even though if they are used they will be added into the 
-changes directory as a new file.
+changes directory as a new file. Development and testing strategies
+may utilize different strategies for dealing with rollbacks, but
+once something is merged to master, you have to consider that
+other people may have that checked out and deployed which is
+why you should treat all changes on master as additive to ensure
+a consistent database state.
 
 Deploying updates in an additive fashion allows any developer
 to check out the database and not worry about their checkout

@@ -18,7 +18,7 @@ applicable if more than one file needs to be referenced to instantiate the
 schema.  
 
 In the event we come up with a file that should be executed between existing 
-files, then pick the number in thbe middle of the two scripts surrounding the
+files, then pick the number in the middle of the two scripts surrounding the
 new script.  For example.  if I have script 1000.sql which executes first, and
 script 2000.sql that executes second and I want to add something that executes
 between those two files, but for logistical reasons should remain separate
@@ -27,13 +27,13 @@ should be named 1500.sql.
 
 Ideally there is only one sql file that exists and gets called, but if there 
 was a desire to break up schema, stored procedures/functions, triggers, etc
-a multi-file system can handle this approach.  
+a multi-file system can handle this approach. 
 
 ################################################################################
 # 2. Seed data
 ################################################################################
 
-This folder should contain the all seed data for the database.  Files should be
+This folder should contain all seed data for the database.  Files should be
 preceeded with a numerical value starting with 1000 and increment by 1000 as
 applicable if more than one file needs to be referenced to instantiate the
 schema.
@@ -60,14 +60,19 @@ data commands.
 
 
 This folder should contain updates or changes to the schema 
-and seed data forthe database.  Multiple changes can be in a 
+and seed data for the database.  Multiple changes can be in a 
 single file, but all changes must be additive.  This means 
-that there is never a rollback and redeploy.  A rollback 
-would be executed as an update, and the re-deployment as yet
-another update. Rollbacks should still be created for 
+that there should never be a rollback and redeploy.  A rollback 
+would be executed as a change, and the re-deployment as yet
+another change. Rollbacks should still be created for 
 changes written and should be stored in the rollbacks directory
 even though if they are used they will be added into the 
-changes directory as a new file.
+changes directory as a new file. Development and testing strategies
+may utilize different strategies for dealing with rollbacks, but
+once something is merged to master, you have to consider that
+other people may have that checked out and deployed which is
+why you should treat all changes on master as additive to ensure
+a consistent database state.
 
 Deploying updates in an additive fashion allows any developer
 to check out the database and not worry about their checkout
@@ -100,20 +105,24 @@ rollback is the original change.  There may also be pre-approved
 changes that are so standard or reference stored proceedures that
 a rolback is not required.
 
-Rollback's should be named the same as the file they are referencing
-in the changes directory.
+Rollback's should have the exact same name as the file they are referencing
+in the changes directory. 
 
 
 ################################################################################
 # 5. Baselining sql
 ################################################################################
 
-When a number of changes have accrued and it become harder to apply
+When a number of changes have accrued and it becomes harder to apply
 changes than it would be to just start over, we can baseline.
 
-When a file is baselined it's contents should be merged to the schema file or
-seed data file that best represents the content.  The file itself should then
-be moved to the archive folder for the database.
+When a database is baselined its contents should be merged to the schema 
+file(s) and seed data file(s) that best represents the content.  Existing 
+change files should then be moved to the archive folder for the database.
+In the even that environment folders are used, the same environment foldes
+should be exist in the archive folder and files should be copied as they
+exist in the changes folder (i.e: mv changes/* archive/). Files in the 
+rollback directory shoudl be removed as they will no longer be needed.
 
 Anyone on an old version of the checked out database should be able to apply
 things that are newer than its newest "change" in the archive folder as well
@@ -122,10 +131,17 @@ as all all items in the changes folder to get back to current.
 New checkouts by default will be current as the changes are included in the new
 baseline or schema scripts used.  
 
-By archiving files in this way it allows us to not have to merge all items in 
+The recommended way to archive files is to just stand up a new tiny database
+from DBdeployer and then use whatever tools are available to you to dump
+the schema and seed data to appropriate files. If you choose, you can even 
+elect to just use a single schema or seed data file to contain everything
+without splitting your data.
+
+DBdeployer also supports manual archiving and baselining. By baselining individual 
+files in this way it allows us to not have to merge all items in 
 changes to the baseline and schema at a single time.  We can merge maybe 30 of
 50 changes in a git branch and then merge to master while not worrying about
-users abililty to come back up to date.
+users abililty to deploy things back up to date.
 
 
 ################################################################################
@@ -151,15 +167,13 @@ directory.
 ################################################################################
 
 There will be some changes where data will be different between environments.
-Currently we are lucky enough to either not have any, or not have identified
-scenarios within our application that this happens.  There are a few that I
-have encountered in past positions and they include:
+There are a few that I have encountered and they include:
 
 - passwords between environments
 - urls for configuration files (test points to test servers, prod to prod)
 - sequence data
 
-In situations like this where there are differences between environments, a 
+In situations like this where there are data differences between environments, a 
 folder should be created for each environment within the seed, schema, 
 changes, and archive directories.  When a file is added, it should follow an 
 override pattern.  The deployment script will check for existence of the file 
