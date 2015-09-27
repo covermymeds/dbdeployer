@@ -2,7 +2,7 @@
 # 2. Seed data
 ################################################################################
 
-This folder should contain the all seed data for the database.  Files should be
+This folder should contain all seed data for the database.  Files should be
 preceeded with a numerical value starting with 1000 and increment by 1000 as
 applicable if more than one file needs to be referenced to instantiate the
 schema.
