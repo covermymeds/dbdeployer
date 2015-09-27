@@ -2,7 +2,6 @@
 
 echo -e "
 Please reference the below sections for usage and naming patterns
-
 1. Schema
 2. Seed Data
 3. Changes
@@ -22,12 +21,16 @@ echo -e "
 # 5. Baselining sql
 ################################################################################
 
-When a number of changes have accrued and it become harder to apply
+When a number of changes have accrued and it becomes harder to apply
 changes than it would be to just start over, we can baseline.
 
-When a file is baselined it's contents should be merged to the schema file or
-seed data file that best represents the content.  The file itself should then
-be moved to the archive folder for the database.
+When a database is baselined its contents should be merged to the schema 
+file(s) and seed data file(s) that best represents the content.  Existing 
+change files should then be moved to the archive folder for the database.
+In the even that environment folders are used, the same environment foldes
+should be exist in the archive folder and files should be copied as they
+exist in the changes folder (i.e: mv changes/* archive/). Files in the 
+rollback directory shoudl be removed as they will no longer be needed.
 
 Anyone on an old version of the checked out database should be able to apply
 things that are newer than its newest \"change\" in the archive folder as well
@@ -36,10 +39,17 @@ as all all items in the changes folder to get back to current.
 New checkouts by default will be current as the changes are included in the new
 baseline or schema scripts used.  
 
-By archiving files in this way it allows us to not have to merge all items in 
+The recommended way to archive files is to just stand up a new tiny database
+from DBdeployer and then use whatever tools are available to you to dump
+the schema and seed data to appropriate files. If you choose, you can even 
+elect to just use a single schema or seed data file to contain everything
+without splitting your data.
+
+DBdeployer also supports manual archiving and baselining. By baselining individual 
+files in this way it allows us to not have to merge all items in 
 changes to the baseline and schema at a single time.  We can merge maybe 30 of
 50 changes in a git branch and then merge to master while not worrying about
-users abililty to come back up to date.
+users abililty to deploy things back up to date.
 
 " >> README.md
 
@@ -51,15 +61,13 @@ echo -e "
 ################################################################################
 
 There will be some changes where data will be different between environments.
-Currently we are lucky enough to either not have any, or not have identified
-scenarios within our application that this happens.  There are a few that I
-have encountered in past positions and they include:
+There are a few that I have encountered and they include:
 
 - passwords between environments
 - urls for configuration files (test points to test servers, prod to prod)
 - sequence data
 
-In situations like this where there are differences between environments, a 
+In situations like this where there are data differences between environments, a 
 folder should be created for each environment within the seed, schema, 
 changes, and archive directories.  When a file is added, it should follow an 
 override pattern.  The deployment script will check for existence of the file 
