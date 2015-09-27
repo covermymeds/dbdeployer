@@ -8,7 +8,7 @@ applicable if more than one file needs to be referenced to instantiate the
 schema.  
 
 In the event we come up with a file that should be executed between existing 
-files, then pick the number in thbe middle of the two scripts surrounding the
+files, then pick the number in the middle of the two scripts surrounding the
 new script.  For example.  if I have script 1000.sql which executes first, and
 script 2000.sql that executes second and I want to add something that executes
 between those two files, but for logistical reasons should remain separate
@@ -17,5 +17,5 @@ should be named 1500.sql.
 
 Ideally there is only one sql file that exists and gets called, but if there 
 was a desire to break up schema, stored procedures/functions, triggers, etc
-a multi-file system can handle this approach.  
+a multi-file system can handle this approach. 
 
