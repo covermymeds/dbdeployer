@@ -1,5 +1,6 @@
 
 Please reference the below sections for usage and naming patterns
+
 1. Schema
 2. Seed Data
 3. Changes
