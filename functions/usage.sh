@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 function usage() {
   echo "${script_name} [options] 
-  -A|--run-as                     User that the script should be run as if not your
-                                    own user.  Requires passwordless sudo
+  -A|--run-as                     User that the script should be run as
+                                    (default: postgres)
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -d|--database [name]            Database name to work with (will attempt to 
