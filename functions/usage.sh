@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function usage() {
   echo "${script_name} [options] 
-  -A|--run-as                     User that the script should be run as
+  -A|--run-as [run-as-user]       Verifies that specified user is running script
                                     (default: postgres)
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
