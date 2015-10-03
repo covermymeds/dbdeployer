@@ -249,7 +249,7 @@ then
     dbname=${file_array[${array_index}]}
 
     array_index=`expr "${array_count}" - "4"`
-    db_basedir='/' #initialize as slash requireing full path
+    db_basedir='' #initialize as empty string to override defined var
     for ((i=1; i<=${array_index}; i++))
     do
       db_basedir="${db_basedir}/${file_array[${i}]}"
@@ -667,7 +667,7 @@ then
   
   if [ "${deployment_db}" != "${dbname}" ]
   then 
-    log_footer "${logfile}"
+    log_footer "${logfile}" "${state}"
     if [ $? -ne 0 ] 
     then
       echo "WARNING: Unable to write footer to log file ${logfile}."

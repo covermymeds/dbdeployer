@@ -1,4 +1,4 @@
-Please refer to the repo wiki for usage info, help, and more.  
+Please refer to the [repo wiki](https://github.com/covermymeds/dbdeployer/wiki) for usage info, help, and more.  
 
 # DBdeployer General Info 
 
