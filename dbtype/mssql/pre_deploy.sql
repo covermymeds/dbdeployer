@@ -1,2 +1,4 @@
 BEGIN TRAN;
 SET XACT_ABORT ON;
+
+select 1;
