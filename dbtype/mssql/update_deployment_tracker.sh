@@ -9,7 +9,8 @@ function update_deployment_tracker() {
   updated_at = getdate()
   where dbname = '${_dbname}'
   and is_active = true
-  ;" > /dev/null 2>&1
+  ;"
+# > /dev/null 2>&1
   rc=$?
 
   unset _dbname
