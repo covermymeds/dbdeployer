@@ -12,8 +12,6 @@ function deploy_file() {
   echo "$(cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}")"
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
 
-  #deploy_output=$(${db_binary} -d ${dbname} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql "$_deploy_file" "${fn_basedir}"/dbtype/"$dbtype"/post_deploy.sql)
-  
   deploy_output=$(${db_binary} -d ${dbname} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${tmpfile}")
   rc=$?
 
