@@ -5,11 +5,12 @@ function update_deployment_tracker() {
 
   ${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -b -Q "
   update deployment_tracker 
-  set is_active = false,
+  set is_active = 0,
   updated_at = getdate()
   where dbname = '${_dbname}'
-  and is_active = true
-  ;" > /dev/null 2>&1
+  and ISNULL(is_active,1) = 1
+  ;"
+# > /dev/null 2>&1
   rc=$?
 
   unset _dbname
