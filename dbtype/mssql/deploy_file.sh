@@ -8,14 +8,14 @@ function deploy_file() {
   
   tmpfile="/tmp/tmp_${filename}"
  
-  echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql >> "${tmpfile}")"
+  echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}")"
   echo "$(cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}")"
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
 
   deploy_output=$(${db_binary} -d ${dbname} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${tmpfile}")
   rc=$?
 
-  echo "$(rm -f "${tmpfile}")"  
+#  echo "$(rm -f "${tmpfile}")"  
 
   echo "${deploy_output}"
 
