@@ -619,7 +619,7 @@ then
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) drop_and_reload ${dbname}; break;;
+          Yes ) drop_and_reload ${dbname}; _DAR=$?; break;;
           No ) exit;;
       esac
     done
@@ -627,8 +627,8 @@ then
 
 
 
-  drop_and_reload ${dbname}
-  if [ $? -ne 0 ]
+ # drop_and_reload ${dbname}
+  if [ "$_DAR" -ne 0 ]
   then
     echo "Something failed when trying to drop and reload the database"
     exit 1

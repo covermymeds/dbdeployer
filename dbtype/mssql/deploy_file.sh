@@ -12,12 +12,18 @@ function deploy_file() {
   echo "$(cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}")"
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
 
+  _date_start=$(date -u +"%s")
+
   deploy_output=$(${db_binary} -d ${dbname} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${tmpfile}")
   rc=$?
 
-#  echo "$(rm -f "${tmpfile}")"  
+  _date_end=$(date -u +"%s")
 
+  _script_duration=$(($_date_end-$_date_start))
+  echo "$(rm -f "${tmpfile}")"  
+  
   echo "${deploy_output}"
+  echo "Script duration $(($_script_duration / 60)) minutes and $(($_script_duration % 60)) seconds." 
 
   if ! [ -z "${2}" ]
   then 

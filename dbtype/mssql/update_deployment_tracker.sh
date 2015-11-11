@@ -6,6 +6,7 @@ function update_deployment_tracker() {
   ${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -b -Q "
   update deployment_tracker 
   set is_active = 0,
+  set deployed_by = 'blah',
   updated_at = getdate()
   where dbname = '${_dbname}'
   and ISNULL(is_active,1) = 1
