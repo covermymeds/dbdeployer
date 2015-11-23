@@ -338,7 +338,7 @@ fi
 db_exists "${deployment_db}"
 if [ $? -ne 0 ]
 then
-  echo "${deployment_db} database does not exist or you do not have permission to acces it, exiting."
+  echo "${deployment_db} database does not exist or you do not have permission to access it, exiting."
   exit 1
 fi
 
