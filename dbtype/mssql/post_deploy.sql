@@ -1,3 +1,4 @@
+
 GO
 IF @@TRANCOUNT>0
 	COMMIT;
