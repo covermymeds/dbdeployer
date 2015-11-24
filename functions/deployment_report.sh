@@ -19,7 +19,7 @@ deployment_report() {
     do
       if ! [ -z "${x}" ]
       then
-        echo "${script_name} -f "${x}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli}"
+        echo "${script_name} -f "${x}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
       fi
     done
   done
