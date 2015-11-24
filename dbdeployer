@@ -8,7 +8,7 @@ fi
 
 #seting up autoloader function that isn't included in directories that are auto-loaded
 load_functions_in_dirs() {
-  
+
   #set functiondirs to string passed in
   _functiondirs=$1
   rc=0
@@ -53,7 +53,7 @@ then
   exit 1
 fi
 
-#overwrite defaults with homedir file 
+#overwrite defaults with homedir file
 if [ -f ~/.dbdeployer ]
 then
   source ~/.dbdeployer
@@ -72,7 +72,7 @@ do
       shift
       ;;
     -c|--confirm)
-      confirm='true' 
+      confirm='true'
       shift
       ;;
     -d|--database)
@@ -102,28 +102,28 @@ do
       ;;
     -k|--skip)
       skip='true'
-      skip_cli='-k' 
+      skip_cli='-k'
       shift
       ;;
     -p|--port)
       shift
       port="${1}"
-      port_cli="-p ${port}" 
+      port_cli="-p ${port}"
       shift
       ;;
     -P|--password)
       shift
       password="${1}"
-      password_cli="-P ${password}" 
+      password_cli="-P ${password}"
       shift
       ;;
     -r|--report)
-      report='true' 
+      report='true'
       shift
       ;;
     -R|--change-control)
       shift
-      export change_control="${1}" 
+      export change_control="${1}"
       shift
       ;;
     -s|--server)
@@ -135,20 +135,21 @@ do
     -T|--dbtype)
       shift
       dbtype="${1}"
+      dbtype_cli="-T ${dbtype}"
       shift
       ;;
     -U|--user)
       shift
       dbuser="${1}"
-      dbuser_cli="-U ${dbuser}" 
+      dbuser_cli="-U ${dbuser}"
       shift
       ;;
     -u|--update)
-      current='true' 
+      current='true'
       shift
       ;;
     -v|--verbose)
-      verbose='true' 
+      verbose='true'
       shift
       ;;
     -X|--drop-and-reload)
@@ -227,8 +228,8 @@ if ! [ -z "${file_path}" ]
 then
 
   #require files to have full path
-  if [[ ${file_path:0:1} != "/" ]] 
-  then 
+  if [[ ${file_path:0:1} != "/" ]]
+  then
     echo "File paths that are passed in must be absolute/full paths. Consider"
     echo "running a report and letting the tool generate the commands to run"
     echo "for you."
@@ -236,7 +237,7 @@ then
   fi
 
   IFS='/' file_array=(${file_path})
-  array_count=`echo ${#file_array[@]}` 
+  array_count=`echo ${#file_array[@]}`
   if [ ${array_count} -gt 2 ]
   then
     array_index=`expr "${array_count}" - "1"`
@@ -291,7 +292,7 @@ fi
 #check that host/server responds to pings
 if ! [ -z "${password}" ]
 then
-  
+
   if [ -z "${dbuser}" ]
   then
     echo "Password can only be specified with username"
@@ -329,7 +330,7 @@ fi
 
 #if -d exists, overwrite database name
 if ! [ -z "${_dbname}" ]
-then 
+then
 	dbname="${_dbname}"
 fi
 
@@ -444,7 +445,7 @@ then
 #environment variable not passed
 else
   environment_count=`ls -R "${db_basedir}/${dbname}/" | grep ":" | grep -v -E "${env_exclude}" | wc -l`
-    
+
 fi
 
 #check if we need an zenvironment variable or not, if environments exist for the db, then we need the specific environment to work with
@@ -452,7 +453,7 @@ if [ ${environment_count} -gt 0 ]
 then
   echo "You did not specify an environment, but environments were found on the database you are trying to deploy."
   echo "Please specify your environment with a -e flag.  Environments found were:"
-  echo 
+  echo
   ls -R "${db_basedir}/${dbname}" | grep ":" | grep -v -E "${env_exclude}"
   exit 1
 fi
@@ -465,8 +466,8 @@ then
 		echo "
     file_dir: ${file_dir}
     file_path_dirs: ${file_path_dirs}
-    array_count: ${array_count} 
-    file_path: ${file_path} 
+    array_count: ${array_count}
+    file_path: ${file_path}
     filename: ${filename}
     change_type: ${change_type}
     dbname: ${dbname}
@@ -508,7 +509,7 @@ then
 			echo "Confirm flag is set, creating automatically..."
 			create_database "${dbname}"
 		else
-	
+
 			select yn in "Yes" "No"; do
 				case ${yn} in
 						Yes ) create_database "${dbname}"; break;;
@@ -516,7 +517,7 @@ then
 				esac
 			done
 		fi # end confirm
-		
+
 	fi # end database exists
 fi # end variable empty check
 
@@ -530,7 +531,7 @@ then
   fi
 
   #check to see if this has already been deployed on the server
-  deployed_check 
+  deployed_check
   rc=$?
   if [ $rc -eq 2 ]
   then
@@ -576,7 +577,7 @@ then
     fi
   fi
 
-  #setup logfile variable 
+  #setup logfile variable
   logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
   if [ -f "${logfile}" ]
   then
@@ -641,10 +642,10 @@ then
 
   #don't log deployments to file for deployments database
   if [ "${deployment_db}" != "${dbname}" ]
-  then 
+  then
     log_header "${logfile}"
 
-    if [ $? -ne 0 ] 
+    if [ $? -ne 0 ]
     then
       echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
       exit 1
@@ -664,11 +665,11 @@ then
       state='FAIL'
     fi
   fi
-  
+
   if [ "${deployment_db}" != "${dbname}" ]
-  then 
+  then
     log_footer "${logfile}" "${state}"
-    if [ $? -ne 0 ] 
+    if [ $? -ne 0 ]
     then
       echo "WARNING: Unable to write footer to log file ${logfile}."
     fi
@@ -681,7 +682,7 @@ then
     exit 1
   fi
 
-  if [ "${state}" = 'FAIL' ] 
+  if [ "${state}" = 'FAIL' ]
   then
     echo "Failed to deploy ${file_path}"
     exit 1
