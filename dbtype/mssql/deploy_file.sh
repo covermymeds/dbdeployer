@@ -10,6 +10,15 @@ function deploy_file() {
  
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}")"
   echo "$(cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}")"
+
+  
+ #Check if a procedure, if so add GO to the post_deploy
+
+        if grep -qi "procedure" "${tmpfile}"
+        then
+                echo "$(echo " GO " >> "${tmpfile}")"
+        fi
+
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
 
   _date_start=$(date -u +"%s")
