@@ -1,15 +1,14 @@
 #!/bin/bash
 function log_deployment() {
 
-
-  _deploy_db="$1"
+  _db_destination_name="$1"
   _change_type="$2"
   _filename="$3"
   _state="$4"
   _additional_fields=''
   _additonal_values=''
 
-  if [ "${_deploy_db}" != "${deployment_db}" ]
+  if [ "${_db_destination_name}" != "${deployment_db}" ]
   then
     _additional_fields=",
     deployed_by,
@@ -32,7 +31,7 @@ function log_deployment() {
   )
   values 
   ( 
-    '${_deploy_db}', 
+    '${_db_destination_name}', 
     '${_change_type}', 
     '${_filename}', 
     '${_state}'
@@ -44,6 +43,7 @@ function log_deployment() {
   rc=$?
 
   unset _deploy_db
+  unset _db_destination_name
   unset _change_type
   unset _filename
   unset _state

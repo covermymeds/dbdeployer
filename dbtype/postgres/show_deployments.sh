@@ -4,7 +4,7 @@ function show_deployments() {
   echo "Below are all deployments for this file.  Please investigate."
   ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -c "
   select * from deployment_tracker t
-  where dbname = '${dbname}' 
+  where dbname = '${db_destination_name}' 
   and ( deployment_outcome = 'OK' OR deployment_outcome = 'SKIP' )
   and deployment_type = '${change_type}'
   and deployment_name = '${filename}';"

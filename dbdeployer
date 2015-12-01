@@ -105,6 +105,11 @@ do
       skip_cli='-k'
       shift
       ;;
+    -n|--db-destination-name)
+      shift
+      _db_destination_name=${1}
+      shift
+      ;;
     -p|--port)
       shift
       port="${1}"
@@ -334,6 +339,14 @@ then
 	dbname="${_dbname}"
 fi
 
+#if -n exists, overwrite destination database name
+#otherwise default to using the dbname
+if ! [ -z "${_db_destination_name}" ]
+then
+	db_destination_name="${_db_destination_name}"
+else
+	db_destination_name="${dbname}"
+fi
 
 #deployments database should already exist even if it is empty, verify it does
 db_exists "${deployment_db}"
@@ -370,26 +383,15 @@ then
 		echo "You must specify the database you want to drop and reload (-d|--database)"
 		exit 1
 	fi
-  #check that dbname is not deployments database
-  if [ "${deployment_db}" = "${dbname}" ]
+  #check that dbname/db_destination_name is not deployments database
+  if [ "${deployment_db}" = "${dbname}" || "${deployment_db}" = "${db_destination_name}" ]
   then
     echo "You can not drop and reload the deployment tracking database"
     exit 1
   fi
 fi
 
-#check report has a database passed in
-if [ "${report}" = "true" ]
-then
-	#check database
-	if [ -z "${dbname}" ]
-	then
-		echo "You must specify the database you want to run a report against if you specify that a report be run (-r|--report)"
-		exit 1
-	fi
-fi
-
-#very that we have a database passed or calculated or exit
+#verify that we have a database passed or calculated or exit
 if [ -z "${dbname}" ]
 then
 	echo "A database name was not specified and could not be found by the file path specified.  Please add a"
@@ -471,6 +473,7 @@ then
     filename: ${filename}
     change_type: ${change_type}
     dbname: ${dbname}
+    db-destination-name: ${db_destination_name}
     report: ${report}
     port: ${port}
     dbuser: ${dbuser}
@@ -497,22 +500,22 @@ fi
 ###################################
 
 
-#check that database exists if dbname is defined and offer to create if its not
-if ! [ -z "${dbname}" ]
+#check that database exists if db_destination_name is defined and offer to create if its not
+if ! [ -z "${db_destination_name}" ]
 then
-  db_exists "${dbname}"
+  db_exists "${db_destination_name}"
 	if [ $? -ne 0 ]
   then
-		echo "${dbname} database does not exist, Do you want to create it?"
+		echo "${db_destination_name} database does not exist, Do you want to create it?"
 		if [ "${confirm}" = 'true' ]
 		then
 			echo "Confirm flag is set, creating automatically..."
-			create_database "${dbname}"
+			create_database "${db_destination_name}"
 		else
 
 			select yn in "Yes" "No"; do
 				case ${yn} in
-						Yes ) create_database "${dbname}"; break;;
+						Yes ) create_database "${db_destination_name}"; break;;
 						No ) exit;;
 				esac
 			done
@@ -611,24 +614,22 @@ then
 
   #confirm
   echo "This is a destructive change that WILL DROP THE EXISTING DATABASE!"
-  echo "Are you sure you want to continue?"
+  echo "Are you very sure you want to continue?"
   if [ "${confirm}" = 'true' ]
   then
     echo "Confirm flag is set, dropping database for reload..."
-    drop_and_reload ${dbname}
+    drop_and_reload "${dbname}" "${db_destination_name}"
   else
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) drop_and_reload ${dbname}; _DAR=$?; break;;
+          Yes ) drop_and_reload "${dbname}" "${db_destination_name}"; _DAR=$?; break;;
           No ) exit;;
       esac
     done
   fi # end confirm
 
-
-
- # drop_and_reload ${dbname}
+ # drop_and_reload "${dbname}" "${db_destination_name}"
   if [ "$_DAR" -ne 0 ]
   then
     echo "Something failed when trying to drop and reload the database"
@@ -656,7 +657,7 @@ then
   then
     state='SKIP'
   else
-    deploy_file "${file_path}" "${logfile}"
+    deploy_file "${db_destination_name}" "${file_path}" "${logfile}"
     rc=$?
     if [ ${rc} = 0 ]
     then
@@ -675,7 +676,7 @@ then
     fi
   fi
 
-  log_deployment "${dbname}" "${change_type}" "${filename}" "${state}"
+  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}"
   if [ $? -ne 0 ]
   then
     echo "Failed to log deployment, please manually log or mark as skipped to prevent redeployment"
@@ -693,7 +694,7 @@ fi
 #run the report to get what needs deployed and then deploy it
 if [ "${current}" = "true" ]
 then
-  update_db_to_current "${dbname}"
+  update_db_to_current "${dbname}" "${db_destination_name}"
   if [ $? -ne 0 ]
   then
     echo "One of the files did not deploy correctly.  No files past that file have been deployed"

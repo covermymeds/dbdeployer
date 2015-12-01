@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 deployment_report() {
-  echo "Running report for database: ${dbname}"
+  echo "Running report for database: ${db_destination_name}"
   IFS='|' read -a folder_list <<< "${deployment_folders}"
   for i in ${folder_list[@]}
   do
@@ -19,7 +19,7 @@ deployment_report() {
     do
       if ! [ -z "${x}" ]
       then
-        echo "${script_name} -f "${x}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
       fi
     done
   done
