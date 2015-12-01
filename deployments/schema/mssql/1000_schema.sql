@@ -12,14 +12,17 @@ CREATE TABLE deployment_tracker (
     reference_url text
 );
 
-go 
+go
 create trigger update_updated_at_column on dbo.deployment_tracker
 AFTER update
 as
 begin
-  update 
+  update
   deployment_tracker set updated_at = getdate() from inserted i where i.id=deployment_tracker.id
 end
 
+GO
+
 CREATE INDEX index_deployment_on_deployment_name ON deployment_tracker (deployment_name);
 
+GO
