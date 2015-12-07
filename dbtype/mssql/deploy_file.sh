@@ -16,7 +16,9 @@ function deploy_file() {
 
         if grep -qi "procedure" "${tmpfile}"
         then
-                echo "$(echo " GO " >> "${tmpfile}")"
+              echo "$(echo " \n " >> "${tmpfile}")"  
+              echo "$(echo " GO " >> "${tmpfile}")"
+                
         fi
 
   echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
