@@ -8,20 +8,20 @@ function deploy_file() {
   
   tmpfile="/tmp/tmp_${filename}"
  
-  echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}")"
-  echo "$(cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}")"
+  cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}"
+  cat "${_deploy_file}" | sed "s/\$(DBNAME)/${dbname}/g" >> "${tmpfile}"
 
   
  #Check if a procedure, if so add GO to the post_deploy
 
         if grep -qi "procedure" "${tmpfile}"
         then
-              echo "$(echo " \n " >> "${tmpfile}")"  
-              echo "$(echo " GO " >> "${tmpfile}")"
+             echo " \n " >> "${tmpfile}"  
+             echo " GO " >> "${tmpfile}"
                 
         fi
 
-  echo "$(cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}")"
+  cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}"
 
   _date_start=$(date -u +"%s")
 
@@ -31,7 +31,7 @@ function deploy_file() {
   _date_end=$(date -u +"%s")
 
   _script_duration=$(($_date_end-$_date_start))
-  echo "$(rm -f "${tmpfile}")"  
+  rm -f "${tmpfile}"  
   
   echo "${deploy_output}"
   echo "Script duration $(($_script_duration / 60)) minutes and $(($_script_duration % 60)) seconds." 
