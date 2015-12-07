@@ -16,7 +16,7 @@ function deploy_file() {
 
         if grep -qi "procedure" "${tmpfile}"
         then
-             echo " \n " >> "${tmpfile}"  
+             echo  >> "${tmpfile}"  
              echo " GO " >> "${tmpfile}"
                 
         fi
