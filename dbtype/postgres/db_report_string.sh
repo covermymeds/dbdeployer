@@ -8,9 +8,9 @@ db_report_string() {
   then
   
     ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -A -t -c "
-    SELECT CONCAT('${db_basedir}/',dbname,'/',deployment_type,'/',deployment_name) 
+    SELECT CONCAT('${db_basedir}/','${dbname}','/',deployment_type,'/',deployment_name) 
     FROM deployment_tracker 
-    WHERE dbname = '${dbname}' 
+    WHERE dbname = '${db_destination_name}' 
     AND deployment_type = '${_deployment_type}' 
     AND deployment_outcome in ('OK','SKIP')
     AND is_active is true;" | sort -rn
