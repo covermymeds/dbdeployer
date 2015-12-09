@@ -1,25 +1,28 @@
 function deploy_file() {
   _db_to_deploy="${1}"
   _deploy_file="${2}"
-  # ${3} is the name of log file, which is optional
+    if ! [ -z "${3}" ]
+  then
+    _logfile="${3}"
+  fi
 
   #create a temp file to hold the concatenate of the pre_deploy, deploy and post_deploy files
 
   filename="$(echo ${_deploy_file} | awk '{print $NF}')"
-  
+
   tmpfile="/tmp/tmp_${filename}"
- 
+
   cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}"
   cat "${_deploy_file}" | sed "s/\$(DBNAME)/${_db_to_deploy}/g" >> "${tmpfile}"
 
-  
+
  #Check if a procedure, if so add GO to the post_deploy
 
         if grep -qi "procedure" "${tmpfile}"
         then
-             echo  >> "${tmpfile}"  
+             echo  >> "${tmpfile}"
              echo " GO " >> "${tmpfile}"
-                
+
         fi
 
   cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}"
@@ -33,14 +36,14 @@ function deploy_file() {
   _date_end=$(date -u +"%s")
 
   _script_duration=$(($_date_end-$_date_start))
-  rm -f "${tmpfile}"  
-  
-  echo "${deploy_output}"
-  echo "Script duration $(($_script_duration / 60)) minutes and $(($_script_duration % 60)) seconds." 
+  rm -f "${tmpfile}"
 
-  if ! [ -z "${2}" ]
-  then 
-    echo "${deploy_output}" >> "${2}" 
+  echo "${deploy_output}"
+  echo "Script duration $(($_script_duration / 60)) minutes and $(($_script_duration % 60)) seconds."
+
+  if ! [ -z "${_logfile}" ]
+  then
+    echo "${deploy_output}" >> "${_logfile}"
   fi
 
   if [[ $deploy_output == *"SqlState 24000, Invalid cursor state"* ]]
