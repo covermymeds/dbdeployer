@@ -107,7 +107,7 @@ do
       ;;
     -n|--db-destination-name)
       shift
-      _db_destination_name=${1}
+      db_destination_name=${1}
       shift
       ;;
     -p|--port)
@@ -341,10 +341,8 @@ fi
 
 #if -n exists, overwrite destination database name
 #otherwise default to using the dbname
-if ! [ -z "${_db_destination_name}" ]
+if [ -z "${db_destination_name}" ]
 then
-	db_destination_name="${_db_destination_name}"
-else
 	db_destination_name="${dbname}"
 fi
 
@@ -473,7 +471,7 @@ then
     filename: ${filename}
     change_type: ${change_type}
     dbname: ${dbname}
-    db-destination-name: ${db_destination_name}
+    db_destination_name: ${db_destination_name}
     report: ${report}
     port: ${port}
     dbuser: ${dbuser}
@@ -629,7 +627,6 @@ then
     done
   fi # end confirm
 
- # drop_and_reload "${dbname}" "${db_destination_name}"
   if [ "$_DAR" -ne 0 ]
   then
     echo "Something failed when trying to drop and reload the database"
