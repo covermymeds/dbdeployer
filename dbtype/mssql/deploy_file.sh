@@ -14,7 +14,7 @@ function deploy_file() {
   
  #Check if a procedure, if so add GO to the post_deploy
 
-        if grep -qi "procedure" "${tmpfile}"
+if grep -qwi "procedure\|fucntion\|trigger" "${tmpfile}"
         then
              echo  >> "${tmpfile}"  
              echo " GO " >> "${tmpfile}"
