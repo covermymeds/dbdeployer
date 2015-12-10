@@ -382,7 +382,7 @@ then
 		exit 1
 	fi
   #check that dbname/db_destination_name is not deployments database
-  if [ "${deployment_db}" = "${dbname}" || "${deployment_db}" = "${db_destination_name}" ]
+  if [ "${deployment_db}" = "${db_destination_name}" ]
   then
     echo "You can not drop and reload the deployment tracking database"
     exit 1
