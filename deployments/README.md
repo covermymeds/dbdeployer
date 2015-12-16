@@ -196,11 +196,11 @@ specific data.
 
 Individual environment only deployment example:
 
-dbname/filename.sql
-dbname/prod/filename.sql
-dbname/qa/
-dbname/test/
-dbname/sandbox/
+- dbname/changes/filename.sql
+- dbname/changes/prod/filename.sql
+- dbname/changes/qa/
+- dbname/changes/test/
+- dbname/changes/sandbox/
 
 In this case, filename.sql in the common directory is an empty file, so it 
 can be deployed or marked to be skipped, but prod will see the file and apply 
