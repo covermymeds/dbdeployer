@@ -72,6 +72,9 @@ url_regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=
 #List in order they should be deployed
 deployment_folders='schema|seed|changes'
 
-#calculate_checksum uses the md5sum program to calculate a checksum for the file and store
-#it in the database with the deployment info for the file, defaults to true.
+#allows global file to be overridden by users ~/.dbdeployer file
+allow_config_override='true'
+
+#calculates the checksum of files and stores in the database. This is required to be
+#true for the autodeploy directory to work 
 calculate_checksum='true'

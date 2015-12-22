@@ -53,10 +53,14 @@ then
   exit 1
 fi
 
-#overwrite defaults with homedir file
-if [ -f ~/.dbdeployer ]
+if [ "${allow_config_override}" = 'true' ]
 then
-  source ~/.dbdeployer
+
+  #overwrite defaults with homedir file
+  if [ -f ~/.dbdeployer ]
+  then
+    source ~/.dbdeployer
+  fi
 fi
 
 ###################################
