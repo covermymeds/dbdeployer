@@ -72,4 +72,6 @@ url_regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=
 #List in order they should be deployed
 deployment_folders='schema|seed|changes'
 
-
+#calculate_checksum uses the md5sum program to calculate a checksum for the file and store
+#it in the database with the deployment info for the file, defaults to true.
+calculate_checksum='true'
