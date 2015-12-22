@@ -1,3 +1,13 @@
+## 201?-??-?? Release 1.0.3
+### Summary
+Added checksum log to db
+
+### Changes
+  - Added checksum logging and options to postgres and mssql
+  - Added label to indicate database in warning message for drop and reload
+  - Added global config variable to optionally disable user config files
+
+
 ## 2015-12-09 Release 1.0.2
 ### Summary
 New features added, bugfix

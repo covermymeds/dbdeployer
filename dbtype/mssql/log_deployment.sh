@@ -7,17 +7,20 @@ function log_deployment() {
   _state="$4"
   _additional_fields=''
   _additonal_values=''
+  _file_checksum="$5"
 
   if [ "${_db_destination_name}" != "${deployment_db}" ]
   then
     _additional_fields=",
     deployed_by,
     deployed_as,
-    reference_url"
+    reference_url,
+    checksum"
     _additional_values=",
     '${deployed_by}',
     '${deployed_as}',
-    '${change_control}'"
+    '${change_control}',
+    '${_file_checksum}'"
   fi
 
   _query_string="
@@ -49,6 +52,7 @@ function log_deployment() {
   unset _state
   unset _additional_fields
   unset _additional_values
+  unset _file_checksum
   
   if [ ${rc} -eq 0 ]
   then

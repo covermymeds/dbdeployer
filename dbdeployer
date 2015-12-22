@@ -53,10 +53,14 @@ then
   exit 1
 fi
 
-#overwrite defaults with homedir file
-if [ -f ~/.dbdeployer ]
+if [ "${allow_config_override}" = 'true' ]
 then
-  source ~/.dbdeployer
+
+  #overwrite defaults with homedir file
+  if [ -f ~/.dbdeployer ]
+  then
+    source ~/.dbdeployer
+  fi
 fi
 
 ###################################
@@ -73,6 +77,10 @@ do
       ;;
     -c|--confirm)
       confirm='true'
+      shift
+      ;;
+    -C|--checksum-off)
+      calculate_checksum='false'
       shift
       ;;
     -d|--database)
@@ -221,7 +229,7 @@ then
 fi
 
 #check if db_binary is found
-which ${db_binary} > /dev/null 2>&1
+command -v ${db_binary} > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
   echo "${db_binary} binary not found"
@@ -489,6 +497,7 @@ then
     run_as: ${run_as}
     deployed_by: ${deployed_by}
     deployed_as: ${deployed_as}
+    calculate_checksum: ${calculate_checksum}
     "
 	fi
 fi
@@ -496,6 +505,14 @@ fi
 ###################################
 #  additional error checking
 ###################################
+
+#check if md5sum binary is found
+command -v md5sum > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+  echo "md5sum binary not found, either install the md5sum program or turn off md5sum in the config file"
+  exit 1
+fi
 
 
 #check that database exists if db_destination_name is defined and offer to create if its not
@@ -611,12 +628,13 @@ if [ "${drop_reload}" = "true" ]
 then
 
   #confirm
-  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE!"
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ($db_destination_name)!"
   echo "Are you very sure you want to continue?"
   if [ "${confirm}" = 'true' ]
   then
     echo "Confirm flag is set, dropping database for reload..."
     drop_and_reload "${dbname}" "${db_destination_name}"
+    _DAR=$?
   else
 
     select yn in "Yes" "No"; do
@@ -637,6 +655,12 @@ fi
 #already validated all filepath stuff, execute query
 if ! [ -z "${file_path}" ]
 then
+  
+  # set checksum value for file unless disabled
+  if [ "${calculate_checksum}" != "false" ]
+  then
+    file_checksum=`md5sum "${file_path}" | awk {'print $1'}`
+  fi
 
   #don't log deployments to file for deployments database
   if [ "${deployment_db}" != "${dbname}" ]
@@ -666,6 +690,7 @@ then
 
   if [ "${deployment_db}" != "${dbname}" ]
   then
+
     log_footer "${logfile}" "${state}"
     if [ $? -ne 0 ]
     then
@@ -673,7 +698,7 @@ then
     fi
   fi
 
-  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}"
+  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}" "${file_checksum}"
   if [ $? -ne 0 ]
   then
     echo "Failed to log deployment, please manually log or mark as skipped to prevent redeployment"

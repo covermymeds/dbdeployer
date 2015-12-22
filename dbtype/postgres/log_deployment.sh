@@ -5,6 +5,7 @@ function log_deployment() {
   _change_type="$2"
   _filename="$3"
   _state="$4"
+  _file_checksum="$5"
   _additional_fields=''
   _additonal_values=''
 
@@ -13,11 +14,13 @@ function log_deployment() {
     _additional_fields=",
     deployed_by,
     deployed_as,
-    reference_url"
+    reference_url,
+    checksum"
     _additional_values=",
     '${deployed_by}',
     '${deployed_as}',
-    '${change_control}'"
+    '${change_control}',
+    '${_file_checksum}'"
   fi
 
   _query_string="
@@ -39,7 +42,6 @@ function log_deployment() {
   )
   ;"
 
-
   ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -c "${_query_string}" > /dev/null 2>&1
   rc=$?
 
@@ -51,6 +53,7 @@ function log_deployment() {
   unset _query_string
   unset _additional_fields
   unset _additional_values
+  unset _file_checksum
 
   if [ ${rc} -eq 0 ] 
   then
