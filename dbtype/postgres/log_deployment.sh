@@ -6,8 +6,23 @@ function log_deployment() {
   _filename="$3"
   _state="$4"
   _file_checksum="$5"
+  _file_already_deployed="$6"
   _additional_fields=''
   _additonal_values=''
+
+
+  if [[ "${_file_already_deployed}" == 'true' ]]
+  then
+    mark_inactive="
+    UPDATE deployment_tracker 
+    SET is_active = false
+    WHERE dbname = '${_db_destination_name}'
+    AND deployment_type = '${_change_type}'
+    AND deployment_name = '${_filename}'
+    AND is_active = true;";
+  else
+    mark_inactive=''
+  fi
 
   if [ "${_db_destination_name}" != "${deployment_db}" ]
   then
@@ -23,7 +38,9 @@ function log_deployment() {
     '${_file_checksum}'"
   fi
 
-  _query_string="
+  _query_string="BEGIN;
+  ${mark_inactive}
+
   insert into deployment_tracker 
   ( 
     dbname, 
@@ -40,10 +57,12 @@ function log_deployment() {
     '${_state}'
     $_additional_values
   )
-  ;"
+  ;
+  COMMIT;"
 
-  ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -c "${_query_string}" > /dev/null 2>&1
+  echo "${_query_string}" | ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} #> /dev/null 2>&1
   rc=$?
+  echo "rc: $rc"
 
   unset _deploy_db
   unset _db_destination_name
