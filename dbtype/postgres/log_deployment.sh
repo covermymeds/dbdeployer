@@ -62,7 +62,6 @@ function log_deployment() {
 
   echo "${_query_string}" | ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} > /dev/null 2>&1
   rc=$?
-  echo "rc: $rc"
 
   unset _deploy_db
   unset _db_destination_name
