@@ -73,6 +73,7 @@ function log_deployment() {
   unset _additional_fields
   unset _additional_values
   unset _file_checksum
+  unset _file_already_deployed
 
   if [ ${rc} -eq 0 ] 
   then
