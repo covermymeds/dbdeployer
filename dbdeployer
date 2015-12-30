@@ -413,7 +413,7 @@ then
   echo "${db_basedir}/${dbname}"
   exit 1
 else
-  IFS='|' read -a folder_list <<< "${deployment_folders}"
+  IFS=':|' read -a folder_list <<< "${deployment_folders}"
   for x in ${folder_list[@]}
   do
     if ! [ -d "${db_basedir}/${dbname}/${x}" ]
@@ -576,6 +576,10 @@ then
         esac
       done
     fi # end confirm
+
+    #set variable so we know to mark old ones as inactive
+    file_already_deployed='true'
+
   fi # end deployed_check
 fi # end file path exists check
 
@@ -698,7 +702,7 @@ then
     fi
   fi
 
-  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}" "${file_checksum}"
+  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}" "${file_checksum}" "${file_already_deployed}"
   if [ $? -ne 0 ]
   then
     echo "Failed to log deployment, please manually log or mark as skipped to prevent redeployment"

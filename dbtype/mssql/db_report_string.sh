@@ -1,13 +1,21 @@
 db_report_string() {
   _deployment_type="$1"
+  _include_checksum="$2"
 
   deployment_tracker_table_exists
+
+  if [ "${_include_checksum}" = 'true' ]
+  then
+    checksum_value=" + '--dbdeployer-md5sum--' + checksum"
+  else
+    checksum_value=''
+  fi
 
   if [ $? -eq 0 ]
   then
     ${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -b -Q "
     SET NOCOUNT ON;
-    SELECT '${db_basedir}/' + '${dbname}' + '/' + deployment_type + '/' + deployment_name
+    SELECT '${db_basedir}/' + '${dbname}' + '/' + deployment_type + '/' + deployment_name${checksum_value}
     FROM deployment_tracker
     WHERE dbname = '${db_destination_name}'
     AND isnull(is_active, 1)=1
