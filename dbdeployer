@@ -8,7 +8,7 @@ fi
 
 #seting up autoloader function that isn't included in directories that are auto-loaded
 load_functions_in_dirs() {
-  
+
   #set functiondirs to string passed in
   _functiondirs=$1
   rc=0
@@ -53,10 +53,14 @@ then
   exit 1
 fi
 
-#overwrite defaults with homedir file 
-if [ -f ~/.dbdeployer ]
+if [ "${allow_config_override}" = 'true' ]
 then
-  source ~/.dbdeployer
+
+  #overwrite defaults with homedir file
+  if [ -f ~/.dbdeployer ]
+  then
+    source ~/.dbdeployer
+  fi
 fi
 
 ###################################
@@ -72,7 +76,11 @@ do
       shift
       ;;
     -c|--confirm)
-      confirm='true' 
+      confirm='true'
+      shift
+      ;;
+    -C|--checksum-off)
+      calculate_checksum='false'
       shift
       ;;
     -d|--database)
@@ -102,28 +110,33 @@ do
       ;;
     -k|--skip)
       skip='true'
-      skip_cli='-k' 
+      skip_cli='-k'
+      shift
+      ;;
+    -n|--db-destination-name)
+      shift
+      db_destination_name=${1}
       shift
       ;;
     -p|--port)
       shift
       port="${1}"
-      port_cli="-p ${port}" 
+      port_cli="-p ${port}"
       shift
       ;;
     -P|--password)
       shift
       password="${1}"
-      password_cli="-P ${password}" 
+      password_cli="-P ${password}"
       shift
       ;;
     -r|--report)
-      report='true' 
+      report='true'
       shift
       ;;
     -R|--change-control)
       shift
-      export change_control="${1}" 
+      export change_control="${1}"
       shift
       ;;
     -s|--server)
@@ -135,20 +148,21 @@ do
     -T|--dbtype)
       shift
       dbtype="${1}"
+      dbtype_cli="-T ${dbtype}"
       shift
       ;;
     -U|--user)
       shift
       dbuser="${1}"
-      dbuser_cli="-U ${dbuser}" 
+      dbuser_cli="-U ${dbuser}"
       shift
       ;;
     -u|--update)
-      current='true' 
+      current='true'
       shift
       ;;
     -v|--verbose)
-      verbose='true' 
+      verbose='true'
       shift
       ;;
     -X|--drop-and-reload)
@@ -215,7 +229,7 @@ then
 fi
 
 #check if db_binary is found
-which ${db_binary} > /dev/null 2>&1
+command -v ${db_binary} > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
   echo "${db_binary} binary not found"
@@ -227,8 +241,8 @@ if ! [ -z "${file_path}" ]
 then
 
   #require files to have full path
-  if [[ ${file_path:0:1} != "/" ]] 
-  then 
+  if [[ ${file_path:0:1} != "/" ]]
+  then
     echo "File paths that are passed in must be absolute/full paths. Consider"
     echo "running a report and letting the tool generate the commands to run"
     echo "for you."
@@ -236,7 +250,7 @@ then
   fi
 
   IFS='/' file_array=(${file_path})
-  array_count=`echo ${#file_array[@]}` 
+  array_count=`echo ${#file_array[@]}`
   if [ ${array_count} -gt 2 ]
   then
     array_index=`expr "${array_count}" - "1"`
@@ -269,7 +283,7 @@ fi #end if file_path
 #validate reference/change control url if provided
 if ! [ -z "${change_control}" ]
 then
-  if ! [[ "${change_control}" =~ "${url_regex}" ]]
+  if ! [[ "${change_control}" =~ ${url_regex} ]]
   then
     echo "The reference URL provided does not appear to be a valid URL, exiting"
     exit 1
@@ -291,7 +305,7 @@ fi
 #check that host/server responds to pings
 if ! [ -z "${password}" ]
 then
-  
+
   if [ -z "${dbuser}" ]
   then
     echo "Password can only be specified with username"
@@ -329,16 +343,22 @@ fi
 
 #if -d exists, overwrite database name
 if ! [ -z "${_dbname}" ]
-then 
+then
 	dbname="${_dbname}"
 fi
 
+#if -n exists, overwrite destination database name
+#otherwise default to using the dbname
+if [ -z "${db_destination_name}" ]
+then
+	db_destination_name="${dbname}"
+fi
 
 #deployments database should already exist even if it is empty, verify it does
 db_exists "${deployment_db}"
 if [ $? -ne 0 ]
 then
-  echo "${deployment_db} database does not exist or you do not have permission to acces it, exiting."
+  echo "${deployment_db} database does not exist or you do not have permission to access it, exiting."
   exit 1
 fi
 
@@ -369,26 +389,15 @@ then
 		echo "You must specify the database you want to drop and reload (-d|--database)"
 		exit 1
 	fi
-  #check that dbname is not deployments database
-  if [ "${deployment_db}" = "${dbname}" ]
+  #check that dbname/db_destination_name is not deployments database
+  if [ "${deployment_db}" = "${db_destination_name}" ]
   then
     echo "You can not drop and reload the deployment tracking database"
     exit 1
   fi
 fi
 
-#check report has a database passed in
-if [ "${report}" = "true" ]
-then
-	#check database
-	if [ -z "${dbname}" ]
-	then
-		echo "You must specify the database you want to run a report against if you specify that a report be run (-r|--report)"
-		exit 1
-	fi
-fi
-
-#very that we have a database passed or calculated or exit
+#verify that we have a database passed or calculated or exit
 if [ -z "${dbname}" ]
 then
 	echo "A database name was not specified and could not be found by the file path specified.  Please add a"
@@ -404,7 +413,7 @@ then
   echo "${db_basedir}/${dbname}"
   exit 1
 else
-  IFS='|' read -a folder_list <<< "${deployment_folders}"
+  IFS=':|' read -a folder_list <<< "${deployment_folders}"
   for x in ${folder_list[@]}
   do
     if ! [ -d "${db_basedir}/${dbname}/${x}" ]
@@ -444,7 +453,7 @@ then
 #environment variable not passed
 else
   environment_count=`ls -R "${db_basedir}/${dbname}/" | grep ":" | grep -v -E "${env_exclude}" | wc -l`
-    
+
 fi
 
 #check if we need an zenvironment variable or not, if environments exist for the db, then we need the specific environment to work with
@@ -452,7 +461,7 @@ if [ ${environment_count} -gt 0 ]
 then
   echo "You did not specify an environment, but environments were found on the database you are trying to deploy."
   echo "Please specify your environment with a -e flag.  Environments found were:"
-  echo 
+  echo
   ls -R "${db_basedir}/${dbname}" | grep ":" | grep -v -E "${env_exclude}"
   exit 1
 fi
@@ -465,11 +474,12 @@ then
 		echo "
     file_dir: ${file_dir}
     file_path_dirs: ${file_path_dirs}
-    array_count: ${array_count} 
-    file_path: ${file_path} 
+    array_count: ${array_count}
+    file_path: ${file_path}
     filename: ${filename}
     change_type: ${change_type}
     dbname: ${dbname}
+    db_destination_name: ${db_destination_name}
     report: ${report}
     port: ${port}
     dbuser: ${dbuser}
@@ -487,6 +497,7 @@ then
     run_as: ${run_as}
     deployed_by: ${deployed_by}
     deployed_as: ${deployed_as}
+    calculate_checksum: ${calculate_checksum}
     "
 	fi
 fi
@@ -495,28 +506,36 @@ fi
 #  additional error checking
 ###################################
 
-
-#check that database exists if dbname is defined and offer to create if its not
-if ! [ -z "${dbname}" ]
+#check if md5sum binary is found
+command -v md5sum > /dev/null 2>&1
+if [ $? -ne 0 ]
 then
-  db_exists "${dbname}"
+  echo "md5sum binary not found, either install the md5sum program or turn off md5sum in the config file"
+  exit 1
+fi
+
+
+#check that database exists if db_destination_name is defined and offer to create if its not
+if ! [ -z "${db_destination_name}" ]
+then
+  db_exists "${db_destination_name}"
 	if [ $? -ne 0 ]
   then
-		echo "${dbname} database does not exist, Do you want to create it?"
+		echo "${db_destination_name} database does not exist, Do you want to create it?"
 		if [ "${confirm}" = 'true' ]
 		then
 			echo "Confirm flag is set, creating automatically..."
-			create_database "${dbname}"
+			create_database "${db_destination_name}"
 		else
-	
+
 			select yn in "Yes" "No"; do
 				case ${yn} in
-						Yes ) create_database "${dbname}"; break;;
+						Yes ) create_database "${db_destination_name}"; break;;
 						No ) exit;;
 				esac
 			done
 		fi # end confirm
-		
+
 	fi # end database exists
 fi # end variable empty check
 
@@ -530,7 +549,7 @@ then
   fi
 
   #check to see if this has already been deployed on the server
-  deployed_check 
+  deployed_check
   rc=$?
   if [ $rc -eq 2 ]
   then
@@ -557,6 +576,10 @@ then
         esac
       done
     fi # end confirm
+
+    #set variable so we know to mark old ones as inactive
+    file_already_deployed='true'
+
   fi # end deployed_check
 fi # end file path exists check
 
@@ -576,7 +599,7 @@ then
     fi
   fi
 
-  #setup logfile variable 
+  #setup logfile variable
   logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
   if [ -f "${logfile}" ]
   then
@@ -609,26 +632,24 @@ if [ "${drop_reload}" = "true" ]
 then
 
   #confirm
-  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE!"
-  echo "Are you sure you want to continue?"
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ($db_destination_name)!"
+  echo "Are you very sure you want to continue?"
   if [ "${confirm}" = 'true' ]
   then
     echo "Confirm flag is set, dropping database for reload..."
-    drop_and_reload ${dbname}
+    drop_and_reload "${dbname}" "${db_destination_name}"
+    _DAR=$?
   else
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) drop_and_reload ${dbname}; break;;
+          Yes ) drop_and_reload "${dbname}" "${db_destination_name}"; _DAR=$?; break;;
           No ) exit;;
       esac
     done
   fi # end confirm
 
-
-
-  drop_and_reload ${dbname}
-  if [ $? -ne 0 ]
+  if [ "$_DAR" -ne 0 ]
   then
     echo "Something failed when trying to drop and reload the database"
     exit 1
@@ -638,13 +659,19 @@ fi
 #already validated all filepath stuff, execute query
 if ! [ -z "${file_path}" ]
 then
+  
+  # set checksum value for file unless disabled
+  if [ "${calculate_checksum}" != "false" ]
+  then
+    file_checksum=`md5sum "${file_path}" | awk {'print $1'}`
+  fi
 
   #don't log deployments to file for deployments database
   if [ "${deployment_db}" != "${dbname}" ]
-  then 
+  then
     log_header "${logfile}"
 
-    if [ $? -ne 0 ] 
+    if [ $? -ne 0 ]
     then
       echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
       exit 1
@@ -655,7 +682,7 @@ then
   then
     state='SKIP'
   else
-    deploy_file "${file_path}" "${logfile}"
+    deploy_file "${db_destination_name}" "${file_path}" "${logfile}"
     rc=$?
     if [ ${rc} = 0 ]
     then
@@ -664,24 +691,25 @@ then
       state='FAIL'
     fi
   fi
-  
+
   if [ "${deployment_db}" != "${dbname}" ]
-  then 
+  then
+
     log_footer "${logfile}" "${state}"
-    if [ $? -ne 0 ] 
+    if [ $? -ne 0 ]
     then
       echo "WARNING: Unable to write footer to log file ${logfile}."
     fi
   fi
 
-  log_deployment "${dbname}" "${change_type}" "${filename}" "${state}"
+  log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}" "${file_checksum}" "${file_already_deployed}"
   if [ $? -ne 0 ]
   then
     echo "Failed to log deployment, please manually log or mark as skipped to prevent redeployment"
     exit 1
   fi
 
-  if [ "${state}" = 'FAIL' ] 
+  if [ "${state}" = 'FAIL' ]
   then
     echo "Failed to deploy ${file_path}"
     exit 1
@@ -692,7 +720,7 @@ fi
 #run the report to get what needs deployed and then deploy it
 if [ "${current}" = "true" ]
 then
-  update_db_to_current "${dbname}"
+  update_db_to_current "${dbname}" "${db_destination_name}"
   if [ $? -ne 0 ]
   then
     echo "One of the files did not deploy correctly.  No files past that file have been deployed"

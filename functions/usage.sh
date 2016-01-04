@@ -5,6 +5,7 @@ function usage() {
                                     (default: postgres)
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
+  -C|--checksum-off               No arguments, turns off checksum logging
   -d|--database [name]            Database name to work with (will attempt to 
                                     auto-discover if -f is used, but can be 
                                     overwritten by using this variable)
@@ -18,6 +19,10 @@ function usage() {
                                     still written to deployment_tracker
                                     (can be used if file was deployed by a
                                     different machanism)
+  -n|--db-destination-name [name] Deploy a database (-d) to a specific destination db,
+                                    useful for when the source name does not match the
+                                    final name of the database to be created.
+                                    ex. determinator -> determinator_test
   -p|--port [port]                Database port to connect on.  (requires -s|server
                                     to be specified)
   -P|--password [password]        Database password to use.  (requires -U|username

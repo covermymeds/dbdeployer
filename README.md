@@ -6,7 +6,7 @@ DBdeployer was developed to be a lightweight tool to manage database deployments
 
 # Pull Requests, Active Development
 
-This tool was developed in house and is currently utilized throughout all of our various environments. We are still adding a lot of features but have seen majore benefits from the simplicity of the code base and the ability to track our deployments.
+This tool was developed in house and is currently utilized throughout all of our various environments. We are still adding a lot of features but have seen major benefits from the simplicity of the code base and the ability to track our deployments.
 
 If you would like to make a pull request, please feel free to do so and it should be reviewed relatively quickly with feedback provided and a clear expectation of when it might be merged.
 

@@ -45,9 +45,6 @@ run_as='postgres'
 #as colon delimited list if your db_binary is not in your users path
 #PATH=$PATH
 
-#environment exclusion list (add folders inside database dir that aren't environments)
-env_exclude='/:|output:|archive:|changes:|seed:|schema:|rollback:|grants:|thesaurus:'
-
 #declare the awk variable that the filename resides in when you list the directories
 #On my mac, this is 1, on my rhel systems its 8.  You can see by running the below command
 # ls -o1 ${dbname}/${i}/*.sql and counting as a space delimited set.  You can verify
@@ -70,6 +67,19 @@ url_regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=
 
 #folders to be considered as requirements for deployment files.
 #List in order they should be deployed
-deployment_folders='schema|seed|changes'
+deployment_folders='schema:|seed:|changes'
 
+#folders that will include files in report when changes are found based on checksum
+#Requires calculate_checksum option to be set to true. These folders are deployed
+#after the list of deployment_folders.
+auto_deploy_folders='sprocs:|functions:|utility'
 
+#environment exclusion list (add folders inside database dir that aren't environments)
+env_exclude="/:|output:|archive:|rollback:|grants:|thesaurus:|${deployment_folders}:|${auto_deploy_folders}"
+
+#allows global file to be overridden by users ~/.dbdeployer file
+allow_config_override='true'
+
+#calculates the checksum of files and stores in the database. This is required to be
+#true for the autodeploy directory to work 
+calculate_checksum='true'

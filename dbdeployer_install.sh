@@ -34,7 +34,7 @@ do
 done
 
 #verify files exist
-for x in dbdeployer config.sh
+for x in dbdeployer config.sh dbdeployer_release
 do
   if ! [ -f "${x}" ]
   then
@@ -74,6 +74,14 @@ done
     exit 1
   fi #end error check
 #fi #end config file exists
+
+#copy version file
+cp dbdeployer_release ${config_dir}
+if [ $? -ne 0 ]
+then
+  echo "Failed to copy version file, exiting"
+  exit 1
+fi #end error check
 
 #copy executable file
 cp dbdeployer ${bin_dir}
