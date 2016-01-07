@@ -4,12 +4,12 @@ function deploy_file() {
   _deploy_file="${2}"
   if ! [ -z "${3}" ]
   then 
-    _logfile="-L${3}"
+    _logfile="--tee='${3}'"
   fi
 
-  ${db_binary} -D ${_db_to_deploy} ${server_flag} ${user_flag} ${port_flag} -vvv --skip-pager -e "${_deploy_file}" "${_logfile}"
+  ${db_binary} -D ${_db_to_deploy} ${server_flag} ${user_flag} ${port_flag} -vvv --skip-pager < "${_deploy_file}"
   rc=$?
-
+  
   unset _db_to_deploy
   unset _deploy_file
   unset _logfile

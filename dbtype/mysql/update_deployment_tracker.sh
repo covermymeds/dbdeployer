@@ -3,7 +3,7 @@ function update_deployment_tracker() {
 
   _db_destination_name="$1"
 
-  ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -e "
+  ${db_binary} -D ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -e "
   update deployment_tracker 
   set is_active = false,
   updated_at = now()

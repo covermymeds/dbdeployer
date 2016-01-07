@@ -12,7 +12,7 @@ function drop_database() {
   fi
 
   ${db_binary} -D ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -e "
-  drop database \"${_drop_dbname}\"; 
+  drop database ${_drop_dbname}; 
   " > /dev/null 2>&1
   if [ $? -ne 0 ] 
   then
