@@ -7,6 +7,7 @@ Please reference the below sections for usage and naming patterns
 4. Rollback
 5. Baselining sql
 6. Archive Directory
+7. Environment Handling
 
 
 ################################################################################
