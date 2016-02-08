@@ -183,6 +183,10 @@ done
 #autoload various files
 load_functions_in_dirs "${fn_basedir}/functions|${fn_basedir}/dbtype/${dbtype}"
 
+#combine complete list of folders to be excluded
+env_exclude="${env_exclude}:|${deployment_folders}:|${auto_deploy_folders}"
+
+
 set_db_binary
 
 if [ $? -ne 0 ]
