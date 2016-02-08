@@ -1,11 +1,18 @@
-## 201?-??-?? Release 1.0.3
+## 2016-02-08 Release 1.1.1
 ### Summary
-Added checksum log to db
+New features added
 
 ### Changes
-  - Added checksum logging and options to postgres and mssql
-  - Added label to indicate database in warning message for drop and reload
-  - Added global config variable to optionally disable user config files
+  - Removed concatonation piece from variable env_exclude in config file and made it merge the pieces together in the program itself.
+
+
+## 2015-12-30 Release 1.1.0
+### Summary
+New features added
+
+### Changes
+  - BREAKING CHANGE: Changed the field separator for deployment_folders to be `:|` instead of just `:`
+  - Added config var for `auto_deploy_folders` that uses checksums to decide if files in those folders need re-deployed. This is dependent upon the `calculate_checksum` variable being set to true.
 
 
 ## 2015-12-09 Release 1.0.2

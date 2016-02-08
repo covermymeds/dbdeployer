@@ -75,7 +75,7 @@ deployment_folders='schema:|seed:|changes'
 auto_deploy_folders='sprocs:|functions:|utility'
 
 #environment exclusion list (add folders inside database dir that aren't environments)
-env_exclude="/:|output:|archive:|rollback:|grants:|thesaurus:|${deployment_folders}:|${auto_deploy_folders}"
+env_exclude="/:|output:|archive:|rollback:|grants:|thesaurus"
 
 #allows global file to be overridden by users ~/.dbdeployer file
 allow_config_override='true'
