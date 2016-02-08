@@ -1,6 +1,6 @@
 ## 2016-02-08 Release 1.1.1
 ### Summary
-New features added
+Moved location of functionality
 
 ### Changes
   - Removed concatonation piece from variable env_exclude in config file and made it merge the pieces together in the program itself.
