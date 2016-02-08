@@ -13,6 +13,9 @@ New features added
 ### Changes
   - BREAKING CHANGE: Changed the field separator for deployment_folders to be `:|` instead of just `:`
   - Added config var for `auto_deploy_folders` that uses checksums to decide if files in those folders need re-deployed. This is dependent upon the `calculate_checksum` variable being set to true.
+  - Added checksum logging and options to postgres and mssql
+  - Added label to indicate database in warning message for drop and reload
+  - Added global config variable to optionally disable user config files
 
 
 ## 2015-12-09 Release 1.0.2
