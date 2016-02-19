@@ -75,6 +75,10 @@ do
       run_as=${1}
       shift
       ;;
+    -a|--auto-deploy-enabled)
+      auto_deploy_folders_enabled='true'
+      shift
+      ;;
     -c|--confirm)
       confirm='true'
       shift
