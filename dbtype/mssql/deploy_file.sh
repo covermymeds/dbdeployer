@@ -16,14 +16,14 @@ function deploy_file() {
   cat "${_deploy_file}" | sed "s/\$(DBNAME)/${_db_to_deploy}/g" >> "${tmpfile}"
 
 
- #Check if a procedure, if so add GO to the post_deploy
+  #Check if a procedure, if so add GO to the post_deploy
 
-if grep -qwi "procedure\|function\|trigger" "${tmpfile}"
-        then
-             echo  >> "${tmpfile}"
-             echo " GO " >> "${tmpfile}"
+  if grep -qwi "procedure\|function\|trigger" "${tmpfile}"
+  then
+       echo  >> "${tmpfile}"
+       echo " GO " >> "${tmpfile}"
 
-        fi
+  fi
 
   cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}"
 
