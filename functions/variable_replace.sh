@@ -5,7 +5,7 @@ function variable_replace() {
   _file="${3}"
 
 
-  sed -i "s/$_variable/$_replace/g" $_file
+  sed -i "s/${_variable}/${_replace}/g" ${_file}
 
   if [ ${?} -eq 0 ]
   then

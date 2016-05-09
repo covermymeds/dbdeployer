@@ -27,7 +27,16 @@ function deploy_file() {
 
   cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}"
   
-  variable_replace '$(DBNAME)' "${_db_to_deploy}" "${tmpfile}"
+  echo
+  echo
+  echo
+  cat ${tmpfile}
+  echo
+  echo
+  echo
+
+
+  variable_replace '\$(DBNAME)' "${_db_to_deploy}" "${tmpfile}"
 
   _date_start=$(date -u +"%s")
 
