@@ -23,9 +23,7 @@ function usage() {
                                     useful for when the source name does not match the
                                     final name of the database to be created.
                                     ex. determinator -> determinator_test
-  -O|--variable-override          No argument, enables dynamic variable overrides via
-                                    the variables_to_replace option
-  -o|--variables_to_replace '[key:value,key2:value] This is a key/value pair where the 
+  -o|--variables_to_replace '[key:value,key2:value]' This is a key/value pair where the 
                                     key and value are separated by a ':'. Multiple sets
                                     can be specified by separating by comma's. If 
                                     variable-override is enabled this will use the 'sed'

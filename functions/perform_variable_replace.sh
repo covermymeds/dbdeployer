@@ -9,6 +9,8 @@ function perform_variable_replace() {
 
   if [ ${?} -eq 0 ]
   then
+    unset _variable
+    unset _replace
     return 0
   else
     return 1

@@ -84,12 +84,8 @@ allow_config_override='true'
 #true for the autodeploy directory to work 
 calculate_checksum='true'
 
-#allows for variables to be replaced (works in conjunction with variables_to_replace)
-variable_override='false'
-
 #key:value pairs to replace in sql files prior to deploying. Must be expressed with
 #a colon as the separator for key/value and multiple replaces can be done with a 
-#comma separated list. Can be left empty but will display a warning message if 
-#variable_override is set to true
+#comma separated list.
 #example: variables_to_replace='$(key1):value1,$(key2):value2,$(key3),value3'
-variables_to_replace=
+variables_to_replace=''
