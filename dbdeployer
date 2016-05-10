@@ -118,6 +118,15 @@ do
       db_destination_name=${1}
       shift
       ;;
+    -O|--variable-override)
+      variable_override='true'
+      shift
+      ;;
+    -o|--variables_to_replace)
+      shift
+      variables_to_replace="${1}"
+      shift
+      ;;
     -p|--port)
       shift
       port="${1}"
@@ -682,11 +691,20 @@ then
     fi
   fi
 
+  if [ "${variable_override}" = 'true' ]
+  then
+    deploy_file_path="/tmp/tmp_variable_replace_${filename}"
+
+    variable_replace "${variables_to_replace}" "${deploy_file_path}"
+  else
+    deploy_file_path="${file_path}"
+  fi
+
   if [ "${skip}" = "true" ]
   then
     state='SKIP'
   else
-    deploy_file "${db_destination_name}" "${file_path}" "${logfile}"
+    deploy_file "${db_destination_name}" "${deploy_file_path}" "${logfile}"
     rc=$?
     if [ ${rc} = 0 ]
     then

@@ -7,9 +7,6 @@ function deploy_file() {
   fi
 
   #create a temp file to hold the concatenate of the pre_deploy, deploy and post_deploy files
-
-  filename="$(echo ${_deploy_file} | awk '{print $NF}')"
-
   tmpfile="/tmp/tmp_${filename}"
 
   cat "${fn_basedir}"/dbtype/"${dbtype}"/pre_deploy.sql > "${tmpfile}"
@@ -26,8 +23,6 @@ function deploy_file() {
   fi
 
   cat "${fn_basedir}"/dbtype/"${dbtype}"/post_deploy.sql >> "${tmpfile}"
-  
-  variable_replace '$(DBNAME)' "${_db_to_deploy}" "${tmpfile}"
 
   _date_start=$(date -u +"%s")
 
