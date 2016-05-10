@@ -10,7 +10,7 @@ function variable_replace() {
 
     # check that we have a colon separator for the value we are evaluating and 
     # error if not
-    if [[ $element == *':'* ]]
+    if [[ `grep -o ":" <<< "$element" | wc -l` -eq 1 ]]
     then
       variable_replace_key=`echo "${element}" | awk -F ':' {'print $1'}`
       variable_replace_val=`echo "${element}" | awk -F ':' {'print $2'}`
