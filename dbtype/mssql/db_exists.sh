@@ -17,7 +17,7 @@ function db_exists() {
 
 
 
-    if [ `${db_binary} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -Q "
+    if [ `${db_binary} ${server_flag}${port_flag} ${user_flag} ${password_flag} -l0 -h -1 -Q "
     SET NOCOUNT ON;
     select coalesce ((SELECT count(name)
     FROM sys.databases

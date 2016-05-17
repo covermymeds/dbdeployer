@@ -13,7 +13,7 @@ db_report_string() {
 
   if [ $? -eq 0 ]
   then
-    ${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -b -Q "
+    ${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -l0 -h -1 -b -Q "
     SET NOCOUNT ON;
     SELECT '${db_basedir}/' + '${dbname}' + '/' + deployment_type + '/' + deployment_name${checksum_value}
     FROM deployment_tracker
