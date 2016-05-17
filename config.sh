@@ -27,7 +27,7 @@ dbtype='postgres'
 #In test environments it can be nice to drop the database and reload it to a
 #known good state. This is obviously dangerous in a production environment
 #so we have disabled that feature by default.
-allow_drop_and_reload='false'
+allow_drop_database='false'
 
 #This is the location where we should look for database folders.  The 
 #specified path out of the box is the recommended location, however it may

@@ -55,11 +55,17 @@ function usage() {
                                     and executes findings
   -v|--verbose                    No argument, shows what the variables are that
                                     are being used at time of deployment
+  -x|--drop-database              No argument, please not this is a desctructive change.
+                                    This will drop the database specified 
+                                    (requires -d|--database to be specified)
+                                    (not compatible with -r|report flag)
+                                    (not compatible with -k|skip flag) 
+                                    (cannot be used with deployment tracking database)
   -X|--drop-and-reload            No argument, please note this is a destructive change. 
                                     This will drop the database specified and will rebuild 
                                     from scripts in the same way a freshly stood up database 
                                     is deployed. Can be useful in dev/test environments
-                                    (requires -d flag)
+                                    (requires -d|--database to be specified)
                                     (not compatible with -r|report flag)
                                     (not compatible with -k|skip flag) 
                                     (cannot be used with deployment tracking database)

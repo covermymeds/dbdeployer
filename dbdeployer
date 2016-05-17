@@ -174,6 +174,10 @@ do
       verbose='true'
       shift
       ;;
+    -x|--drop-database)
+      drop_db='true'
+      shift
+      ;;
     -X|--drop-and-reload)
       drop_reload='true'
       shift
@@ -376,18 +380,24 @@ then
 fi
 
 #check flags with drop and reload
-if [ "${drop_reload}" = "true" ]
+if [ "${drop_reload}" = 'true' ] || [ "${drop_db}" = 'true' ]
 then
   #is drop and reload allowed on this server
-  if [ "${allow_drop_and_reload}" != 'true' ]
+  if [ "${allow_drop_database}" != 'true' ]
   then
     echo "The configuration file has the option to allow drop and reload disabled, exiting"
+    exit 1
+  fi
+  #verify drop and reload and drop are not both specified
+  if [ "${drop_reload}" = 'true' ] && [ "${drop_db}" = 'true' ]
+  then
+    echo "You can not use the -x and the -X options together. The -X option encompases the drop option for dropping and reloading the database"
     exit 1
   fi
 	#check report
   if [ "${report}" = "true" ]
 	then
-		echo "The report flag is not compatible with the drop and reload flag."
+		echo "The report flag is not compatible with an option that drops the database."
 		exit 1
 	fi
   #check skip
@@ -405,7 +415,7 @@ then
   #check that dbname/db_destination_name is not deployments database
   if [ "${deployment_db}" = "${db_destination_name}" ]
   then
-    echo "You can not drop and reload the deployment tracking database"
+    echo "You can not drop the deployment tracking database with dbdeployer"
     exit 1
   fi
 fi
@@ -505,6 +515,7 @@ then
     confirm: ${confirm}
     skip: ${skip}
     drop-and-reload: ${drop_reload}
+    drop_database: ${drop_database}
     db_basedir: ${db_basedir}
     fn_basedir: ${fn_basedir}
     run_as: ${run_as}
@@ -641,7 +652,7 @@ then
 fi
 
 #already validated drop and reload, execute now
-if [ "${drop_reload}" = "true" ]
+if [ "${drop_reload}" = 'true' ]
 then
 
   #confirm
@@ -656,7 +667,10 @@ then
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) drop_and_reload "${dbname}" "${db_destination_name}"; _DAR=$?; break;;
+          Yes ) 
+            drop_and_reload "${dbname}" "${db_destination_name}"
+            _DAR=$?
+            break;;
           No ) exit;;
       esac
     done
@@ -665,6 +679,39 @@ then
   if [ "$_DAR" -ne 0 ]
   then
     echo "Something failed when trying to drop and reload the database"
+    exit 1
+  fi
+fi
+
+#already validated drop database, execute now
+if [ "${drop_db}" = 'true' ]
+then
+
+  #confirm
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ($db_destination_name)!"
+  echo "Are you very sure you want to continue?"
+  if [ "${confirm}" = 'true' ]
+  then
+    echo "Confirm flag is set, dropping database..."
+    drop_and_mark_database "${db_destination_name}"
+    _drop_database=$?
+  else
+
+    select yn in "Yes" "No"; do
+      case ${yn} in
+          Yes ) 
+            drop_and_mark_database "${db_destination_name}"
+            _drop_database=$?
+            echo "Dropping database ${db_destination_name}"
+            break;;
+          No ) exit;;
+      esac
+    done
+  fi # end confirm
+
+  if [ "${_drop_database}" -ne 0 ]
+  then
+    echo "Something failed when trying to drop the database. If the database is no longer present, you may need to manually mark all deployments for that database to false in the tracking database."
     exit 1
   fi
 fi
