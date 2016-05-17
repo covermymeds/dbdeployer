@@ -3,6 +3,10 @@ function usage() {
   echo "${script_name} [options] 
   -A|--run-as [run-as-user]       Verifies that specified user is running script
                                     (default: postgres)
+  -a|--auto-deploy-enabled        Enables folders specified in auto_deploy_folders
+                                    to show up in deployment report and updates
+                                    based on changes in checksum
+                                    (default: disabled)
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -C|--checksum-off               No arguments, turns off checksum logging

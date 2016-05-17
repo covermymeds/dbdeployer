@@ -26,49 +26,53 @@ deployment_report() {
   done
 
   # auto deploy folders
-  if [ ${calculate_checksum} = 'true' ] 
+  if [ ${auto_deploy_folders_enabled} = 'true' ]
   then
-    IFS=':|' read -a auto_deploy_folder_list <<< "${auto_deploy_folders}"
-    for i in ${auto_deploy_folder_list[@]}
-    do
-      DB='' #clear variable from earlier runs
-      FS='' #clear variable from earlier runs
-      deploy_folder="${db_basedir}/${dbname}/${i}"
 
-      if [ -d "${deploy_folder}" ]
-      then
-        echo "Differences for ${i}:"
-        DB=`eval "db_report_string '${i}' 'true'"`
+    if [ ${calculate_checksum} = 'true' ] 
+    then
+      IFS=':|' read -a auto_deploy_folder_list <<< "${auto_deploy_folders}"
+      for i in ${auto_deploy_folder_list[@]}
+      do
+        DB='' #clear variable from earlier runs
+        FS='' #clear variable from earlier runs
+        deploy_folder="${db_basedir}/${dbname}/${i}"
 
-
-        if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
+        if [ -d "${deploy_folder}" ]
         then
-          FS_CHECKSUM='' #initialize empty var
-          FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
-          for j in ${FS_LIST}
-          do
-#            echo "file: $j"
-            FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
-#            echo "FS_CHECKSUM: $FS_CHECKSUM"
-            FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
-          done
-        else
-          FS=''
-        fi
-
-#    echo "DB: $DB"
-#    echo "FS: $FS"
+          echo "Differences for ${i}:"
+          DB=`eval "db_report_string '${i}' 'true'"`
 
 
-        for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
-        do
-          if ! [ -z "${x}" ]
+          if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
           then
-            auto_deploy_file=`echo ${x} | awk -F '--dbdeployer-md5sum--' {'print $1'}`
-            echo "${script_name} -f "${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+            FS_CHECKSUM='' #initialize empty var
+            FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+            for j in ${FS_LIST}
+            do
+  #            echo "file: $j"
+              FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
+  #            echo "FS_CHECKSUM: $FS_CHECKSUM"
+              FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
+            done
+          else
+            FS=''
           fi
-        done
-      fi #end directory exists check
-    done
-  fi #end calculate_checksum check
+
+  #    echo "DB: $DB"
+  #    echo "FS: $FS"
+
+
+          for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
+          do
+            if ! [ -z "${x}" ]
+            then
+              auto_deploy_file=`echo ${x} | awk -F '--dbdeployer-md5sum--' {'print $1'}`
+              echo "${script_name} -f "${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_user_flag} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+            fi
+          done
+        fi #end directory exists check
+      done
+    fi #end calculate_checksum check
+  fi #end auto deploy folders enabled
 }

@@ -1,3 +1,11 @@
+## 2016-02-19 Release 1.1.2
+### Summary
+Added option to disable auto deploy folders
+
+### Changes
+  - auto_deploy_folders_enabled option was added with a default value of false to resolve https://github.com/covermymeds/dbdeployer/issues/34. More work to other items mentioned in this issue will come in the future.
+
+
 ## 2016-02-08 Release 1.1.1
 ### Summary
 Moved location of functionality

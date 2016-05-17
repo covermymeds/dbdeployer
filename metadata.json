@@ -1,6 +1,6 @@
 {
   "name": "dbdeployer",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "CoverMyMeds",
   "license": "MIT",
   "summary": "Manage Database Deployments",
