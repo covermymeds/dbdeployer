@@ -83,3 +83,9 @@ allow_config_override='true'
 #calculates the checksum of files and stores in the database. This is required to be
 #true for the autodeploy directory to work 
 calculate_checksum='true'
+
+#key:value pairs to replace in sql files prior to deploying. Must be expressed with
+#a colon as the separator for key/value and multiple replaces can be done with a 
+#comma separated list.
+#example: variables_to_replace='$(key1):value1,$(key2):value2,$(key3),value3'
+variables_to_replace=''

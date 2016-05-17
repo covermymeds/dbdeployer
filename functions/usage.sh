@@ -23,6 +23,11 @@ function usage() {
                                     useful for when the source name does not match the
                                     final name of the database to be created.
                                     ex. determinator -> determinator_test
+  -o|--variables_to_replace '[key:value,key2:value]' This is a key/value pair where the 
+                                    key and value are separated by a ':'. Multiple sets
+                                    can be specified by separating by comma's. If 
+                                    variable-override is enabled this will use the 'sed'
+                                    command to find/replace values       
   -p|--port [port]                Database port to connect on.  (requires -s|server
                                     to be specified)
   -P|--password [password]        Database password to use.  (requires -U|username

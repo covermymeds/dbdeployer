@@ -118,6 +118,11 @@ do
       db_destination_name=${1}
       shift
       ;;
+    -o|--variables_to_replace)
+      shift
+      variables_to_replace="${1}"
+      shift
+      ;;
     -p|--port)
       shift
       port="${1}"
@@ -682,11 +687,21 @@ then
     fi
   fi
 
+  if [ ${#variables_to_replace} -gt 0 ]
+  then
+    deploy_file_path="/tmp/tmp_variable_replace_${filename}"
+    cp -f "${file_path}" "${deploy_file_path}"
+    # DBNAME is available via variable replace as well if user defined options are passed in
+    variable_replace "\$(DBNAME):${db_destination_name},${variables_to_replace}" "${deploy_file_path}"
+  else
+    deploy_file_path="${file_path}"
+  fi
+
   if [ "${skip}" = "true" ]
   then
     state='SKIP'
   else
-    deploy_file "${db_destination_name}" "${file_path}" "${logfile}"
+    deploy_file "${db_destination_name}" "${deploy_file_path}" "${logfile}"
     rc=$?
     if [ ${rc} = 0 ]
     then
@@ -719,6 +734,12 @@ then
     exit 1
   fi
 
+  # clean up tmp file used for variable replace, intentionally after state check so file can remain
+  # in place for manual re-deploy/investigation as that check exits
+  if [ ${#variables_to_replace} -gt 0 ]
+  then
+    rm -rf "${deploy_file_path}"
+  fi
 fi
 
 #run the report to get what needs deployed and then deploy it
