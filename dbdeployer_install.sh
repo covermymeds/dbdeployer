@@ -10,6 +10,8 @@ config_base_dir='/etc'                                        #location to insta
 config_dir="${config_base_dir}/${package_name}"               #full path to config dir
 function_base_dir='/usr/libexec'                              #location to install functions dir
 function_dir="${function_base_dir}/${package_name}"           #full path to functions dir
+log_dir="/var/log/${package_name}"                            #default log location
+group_name='dbdeployer'                                       #name of the group (used for log file permission)
 
 
 
@@ -51,7 +53,7 @@ then
 fi
 
 #make necessary directories on filesystem
-for x in ${config_dir} ${function_dir} ${package_data_dir} ${package_database_dir}
+for x in ${config_dir} ${function_dir} ${package_data_dir} ${package_database_dir} ${log_dir}
 do
   if ! [ -d ${x} ]
   then
@@ -123,4 +125,33 @@ then
   exit 1
 fi #end error check
 
+#create group
+if [ `grep "${group_name}" /etc/group | wc -l` -eq 0 ]
+then
+  groupadd "${group_name}"
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to add group to system, exiting"
+    exit 1
+  fi #end error check
+fi
 
+#set permissions on log_dir
+chown root:${group_name} ${log_dir}
+if [ $? -ne 0 ]
+then
+  echo "Failed to set ownership of log directory, exiting"
+  exit 1
+fi #end error check
+chmod 775 ${log_dir}
+if [ $? -ne 0 ]
+then
+  echo "Failed to set permission on log directory, exiting"
+  exit 1
+fi #end error check
+
+#installation is complete
+echo "Installation has completed successfully."
+
+#warn that they will have to add users to the dbdeployer group before deploying files
+echo "Please add any users that will be deploying files to the 'dbdeployer' group."

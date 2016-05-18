@@ -596,37 +596,34 @@ then
   fi # end deployed_check
 fi # end file path exists check
 
-#don't log files for deployments db
-if [ "${dbname}" != "${deployment_db}" ]
+# verify log directories exists correctly
+full_log_dir="${log_dir}/${db_destination_name}"
+if test ! -d "${full_log_dir}"
 then
-  if test ! -d "${db_basedir}/${dbname}/${change_type}/output"
+  echo "output directory doesn't exist, creating..."
+  mkdir -p "${full_log_dir}"
+
+  if [ $? -ne 0 ]
   then
-    echo "output directory doesn't exist, creating..."
-    mkdir -p "${db_basedir}/${dbname}/${change_type}/output"
+    echo "failed to create output directory, exiting"
+    exit 1
+  fi
+fi
 
+#setup logfile variable
+logfile="${full_log_dir}/${filename}.out"
+if [ -f "${logfile}" ]
+then
 
-    if [ $? -ne 0 ]
-    then
-      echo "failed to create output directory, exiting"
-      exit 1
-    fi
+  if ! [ -z ${verbose} ]
+  then
+    echo "output file already exists, automatically appending to existing file"
   fi
 
-  #setup logfile variable
-  logfile="${db_basedir}/${dbname}/${change_type}/output/${filename}.out"
-  if [ -f "${logfile}" ]
+  if test ! -w "${logfile}"
   then
-
-    if ! [ -z ${verbose} ]
-    then
-      echo "output file already exists, automatically appending to existing file"
-    fi
-
-    if test ! -w "${logfile}"
-    then
-      echo "Could not write to log file ${logfile}, exiting"
-      exit 1
-    fi
+    echo "Could not write to log file ${logfile}, exiting"
+    exit 1
   fi
 fi
 
@@ -679,16 +676,12 @@ then
     file_checksum=`md5sum "${file_path}" | awk {'print $1'}`
   fi
 
-  #don't log deployments to file for deployments database
-  if [ "${deployment_db}" != "${dbname}" ]
-  then
-    log_header "${logfile}"
+  log_header "${logfile}"
 
-    if [ $? -ne 0 ]
-    then
-      echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
-      exit 1
-    fi
+  if [ $? -ne 0 ]
+  then
+    echo "Unable to write to log file.  Check permissions on ${logfile}.  Exiting since we can't log."
+    exit 1
   fi
 
   if [ ${#variables_to_replace} -gt 0 ]
@@ -715,14 +708,10 @@ then
     fi
   fi
 
-  if [ "${deployment_db}" != "${dbname}" ]
+  log_footer "${logfile}" "${state}"
+  if [ $? -ne 0 ]
   then
-
-    log_footer "${logfile}" "${state}"
-    if [ $? -ne 0 ]
-    then
-      echo "WARNING: Unable to write footer to log file ${logfile}."
-    fi
+    echo "WARNING: Unable to write footer to log file ${logfile}."
   fi
 
   log_deployment "${db_destination_name}" "${change_type}" "${filename}" "${state}" "${file_checksum}" "${file_already_deployed}"
