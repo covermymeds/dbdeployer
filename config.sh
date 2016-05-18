@@ -7,10 +7,13 @@
 ###############################################################################
 
 #set the bash format of how you want your timestamps to appear in log files
-timestamp=$(date +%s)
+timestamp=$(date)
 
 #name of the database where deployments are tracked
 deployment_db='deployments'
+
+#log directory
+log_dir='/var/log/dbdeployer'
 
 #displays values that are used for most of the functions for troubleshooting
 verbose='false'
