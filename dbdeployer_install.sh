@@ -155,3 +155,4 @@ echo "Installation has completed successfully."
 
 #warn that they will have to add users to the dbdeployer group before deploying files
 echo "Please add any users that will be deploying files to the 'dbdeployer' group."
+echo "Can be done with this command on RHEL systems: usermod -aG dbdeployer [username]"
