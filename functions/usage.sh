@@ -61,6 +61,7 @@ function usage() {
                                     (not compatible with -r|report flag)
                                     (not compatible with -k|skip flag) 
                                     (cannot be used with deployment tracking database)
+                                    (can optionally include the -n|--db-destination-name)
   -X|--drop-and-reload            No argument, please note this is a destructive change. 
                                     This will drop the database specified and will rebuild 
                                     from scripts in the same way a freshly stood up database 
@@ -69,6 +70,7 @@ function usage() {
                                     (not compatible with -r|report flag)
                                     (not compatible with -k|skip flag) 
                                     (cannot be used with deployment tracking database)
+                                    (can optionally include the -n|--db-destination-name)
   -h|--help                       Show this help message
   "
 }
