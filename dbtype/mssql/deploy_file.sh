@@ -26,7 +26,7 @@ function deploy_file() {
 
   _date_start=$(date -u +"%s")
 
-  deploy_output=$(${db_binary} -d ${_db_to_deploy} ${server_flag}${port_flag} ${user_flag} ${password_flag} -h -1 -e -b -i "${tmpfile}")
+  deploy_output=$(${db_binary} -d ${_db_to_deploy} ${server_flag}${port_flag} ${user_flag} ${password_flag} -l0 -h -1 -e -b -i "${tmpfile}")
 
   rc=$?
 
