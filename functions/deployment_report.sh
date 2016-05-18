@@ -26,10 +26,10 @@ deployment_report() {
   done
 
   # auto deploy folders
-  if [ ${auto_deploy_folders_enabled} = 'true' ]
+  if [ "${auto_deploy_folders_enabled}" = 'true' ]
   then
 
-    if [ ${calculate_checksum} = 'true' ] 
+    if [ "${calculate_checksum}" = 'true' ] 
     then
       IFS=':|' read -a auto_deploy_folder_list <<< "${auto_deploy_folders}"
       for i in ${auto_deploy_folder_list[@]}
