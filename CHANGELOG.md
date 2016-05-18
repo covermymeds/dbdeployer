@@ -1,8 +1,17 @@
-## 2016-02-19 Release 1.1.2
+## 2016-05-18 Release 1.2.0
 ### Summary
-Added option to disable auto deploy folders
+Lots of new features and bug fixes
 
 ### Changes
+  - BREAKING CHANGE: Changed the variable name for `allow_drop_and_reload` to `allow_drop_database`
+  - BREAKING CHANGE: Created `dbdeployer` group with installer that has permissions to log directory. You will need to add users to this group or adjust permissions on the log directory
+  - Added ability to drop the desired database or destination database without doing a reload (useful for dev and ci environments, or decommissioning production databases)
+  - Moved logging to /var/log/dbdeployer (configurable via config file)
+  - Added support for MySQL!
+  - Removed hard coded values for ping server check and enabled them to be configured in config file
+  - Changed logging to not include the change type as part of the folder structure for log file. This allows rollbacks of a migration to be seen in the same file migration was deployed from (if deploying rollbacks from the rollback directory)
+  - Changed mssql dbtype to disable the connection timeout. Default was 8 seconds before
+  - Migrated existing variable replace in mssql to global function. Available to all dbtypes now based on config variable set of key:value pairs (available on the command line as well)
   - auto_deploy_folders_enabled option was added with a default value of false to resolve https://github.com/covermymeds/dbdeployer/issues/34. More work to other items mentioned in this issue will come in the future.
 
 
