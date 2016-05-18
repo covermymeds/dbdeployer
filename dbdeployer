@@ -307,11 +307,11 @@ fi
 #check that host/server responds to pings
 if ! [ -z "${server}" ]
 then
-	check_server_ping
-	if [ $? -ne 0 ]
-	then
-		exit 1
-	fi
+  check_server_ping
+  if [ $? -ne 0 ]
+  then
+    exit 1
+  fi
   set_server_flags
 fi
 

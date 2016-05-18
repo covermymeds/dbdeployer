@@ -95,3 +95,11 @@ calculate_checksum='true'
 #comma separated list.
 #example: variables_to_replace='$(key1):value1,$(key2):value2,$(key3),value3'
 variables_to_replace=''
+
+#ping is used when connecting to a remote server to verify it is up. The below values
+#are used for the ping command to set the number of times to send, the interval, and
+#the timeout. If any of the packets come back it is seen as a success.
+enable_ping='true'
+ping_count=5
+ping_wait=2
+ping_interval=0.2
