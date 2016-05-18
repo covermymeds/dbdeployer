@@ -1,3 +1,10 @@
+## 2016-05-18 Release 1.2.1
+### Summary
+Bug fix
+
+### Changes
+  - Quoted variables to ensure negative test compares correctly for checksum and auto deploy folders
+
 ## 2016-05-18 Release 1.2.0
 ### Summary
 Lots of new features and bug fixes
