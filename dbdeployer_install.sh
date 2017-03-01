@@ -10,6 +10,7 @@ config_base_dir='/etc'                                        #location to insta
 config_dir="${config_base_dir}/${package_name}"               #full path to config dir
 function_base_dir='/usr/libexec'                              #location to install functions dir
 function_dir="${function_base_dir}/${package_name}"           #full path to functions dir
+plugin_dir="${function_dir}"                                  #location for plugin/module directory
 log_dir="/var/log/${package_name}"                            #default log location
 group_name='dbdeployer'                                       #name of the group (used for log file permission)
 
@@ -26,7 +27,7 @@ then
 fi
 
 #verify directories exist
-for x in dbtype dbtype/postgres 'functions' sample_structure deployments ${bin_dir} ${config_base_dir} ${function_base_dir} ${package_base_data_dir}
+for x in dbtype dbtype/postgres 'functions'  sample_structure deployments ${bin_dir} ${config_base_dir} ${function_base_dir} ${package_base_data_dir}
 do
   if ! [ -d "${x}" ]
   then
@@ -90,6 +91,14 @@ cp dbdeployer ${bin_dir}
 if [ $? -ne 0 ]
 then
   echo "Failed to copy executable file, exiting"
+  exit 1
+fi #end error check
+
+#copy pluginsdirectory
+cp -R 'plugins' ${plugin_dir}
+if [ $? -ne 0 ]
+then
+  echo "Failed to copy plugin directory, exiting"
   exit 1
 fi #end error check
 

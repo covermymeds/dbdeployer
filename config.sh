@@ -41,6 +41,16 @@ db_basedir='/var/lib/dbdeployer/databases'
 #them somewhere else for whatever reason, you can update the path here
 fn_basedir='/usr/libexec/dbdeployer'
 
+#this is where the modules or plugin directories should be deployed. Just
+#copy any plugin directories to this location and reference them in the
+#order in which they should be loaded using the -m|--module-list variable
+module_basedir='/usr/libexec/dbdeployer/plugins'
+
+#this is the variable that holds the list of plugins to load. They are loaded
+#in the order specified, so the last plugin listed would win if two plugins
+#override the same function
+module_list=
+
 #user to make sure the script is being run as
 run_as='postgres'
 

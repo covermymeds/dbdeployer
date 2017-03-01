@@ -23,6 +23,10 @@ function usage() {
                                     still written to deployment_tracker
                                     (can be used if file was deployed by a
                                     different machanism)
+  -m|--module-list                Module or plugin directories to load. Should be a
+                                    comma seperated list. List module specified last
+                                    will be applied for functions that are redundant in 
+                                    module list (example: git,report_override)
   -n|--db-destination-name [name] Deploy a database (-d) to a specific destination db,
                                     useful for when the source name does not match the
                                     final name of the database to be created.
