@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 unset deployment_report
+
+# variables for git-plugin
+branch_to_compare='origin/master'
+
 deployment_report() {
   #standard deploy folders
   echo "Running report for database: ${db_destination_name}"
@@ -12,6 +16,14 @@ deployment_report() {
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
+      diff_files=`eval "git diff --name-only ${branch_to_compare} | xargs"`
+
+      for x in ${diff_files}
+      do
+        FS=`echo -e "${FS}\n${db_basedir}/${x}\n"`
+      done
+
+
       FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
     else
       FS=''
