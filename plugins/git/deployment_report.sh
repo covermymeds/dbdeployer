@@ -16,20 +16,25 @@ deployment_report() {
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
-      diff_files=`eval "git diff --name-only ${branch_to_compare} | xargs"`
+      diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+
+      #echo "diff_file: ${diff_files}"
 
       for x in ${diff_files}
       do
-        FS=`echo -e "${FS}\n${db_basedir}/${x}\n"`
+        trim_x=`echo $x`
+        FS=`echo -e "${FS}\n${db_basedir}/${trim_x}\n"`
+
       done
 
-
-      FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
     else
       FS=''
     fi
 
-    for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
+    #echo -e "FS: \n${FS}"
+
+    #diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | sort -n
+    for x in `diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
     do
       if ! [ -z "${x}" ]
       then
@@ -60,7 +65,7 @@ deployment_report() {
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
           then
             FS_CHECKSUM='' #initialize empty var
-            FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+            FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
             for j in ${FS_LIST}
             do
   #            echo "file: $j"
@@ -76,7 +81,7 @@ deployment_report() {
   #    echo "FS: $FS"
 
 
-          for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
+          for x in `diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
           do
             if ! [ -z "${x}" ]
             then
