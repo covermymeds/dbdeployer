@@ -2,7 +2,7 @@
 unset deployment_report
 
 # variables for git-plugin
-branch_to_compare='origin/master'
+branch_to_compare="${branch_to_compare:-origin/master}"
 
 deployment_report() {
   #standard deploy folders
