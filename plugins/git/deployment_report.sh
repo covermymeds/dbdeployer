@@ -16,16 +16,22 @@ deployment_report() {
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
-      diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+      if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
+      then
+        # on master, compare from file system
+        FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
+      else
+        diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
 
-      #echo "diff_file: ${diff_files}"
+        #echo "diff_file: ${diff_files}"
 
-      for x in ${diff_files}
-      do
-        trim_x=`echo $x`
-        FS=`echo -e "${FS}\n${db_basedir}/${trim_x}\n"`
+        for x in ${diff_files}
+        do
+          trim_x=`echo $x`
+          FS=`echo -e "${FS}\n${db_basedir}/${trim_x}\n"`
 
-      done
+        done
+      fi
 
     else
       FS=''
@@ -65,14 +71,21 @@ deployment_report() {
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
           then
             FS_CHECKSUM='' #initialize empty var
-            FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+            if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
+            then
+              FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+            else
+              FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+            fi
+
             for j in ${FS_LIST}
             do
-  #            echo "file: $j"
+              # echo "file: $j"
               FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
-  #            echo "FS_CHECKSUM: $FS_CHECKSUM"
+              # echo "FS_CHECKSUM: $FS_CHECKSUM"
               FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
             done
+
           else
             FS=''
           fi
