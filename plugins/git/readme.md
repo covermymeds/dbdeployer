@@ -8,7 +8,9 @@ In `/etc/dbdeployer/config.sh` or in `~/.dbdeployer` add the below line and adju
 branch_to_compare='origin/master'
 ```
 
-# deployment_report
+# Functions Changed
+
+### deployment_report
 This function was changed to see if you are in a branch when deploying. If you are, it will only use files that are committed to git that aren't on the `branch_to_compare`. If you are on the `branch_to_compare`, then it will fall back to a standard filesystem comparison.
 
 This change is applied to both regular deployment folders and auto deployment folders.
