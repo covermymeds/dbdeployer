@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 db_report_string() {
-  _deployment_type="$1"
-  _include_checksum="$2"
+  _deployment_type="${1}"
+  _include_checksum="${2}"
   _is_autodeploy="${3}"
 
   deployment_tracker_table_exists
