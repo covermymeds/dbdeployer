@@ -41,7 +41,7 @@ deployment_report() {
         if [ -d "${deploy_folder}" ]
         then
           echo "Differences for ${i}:"
-          DB=`eval "db_report_string '${i}' 'true'"`
+          DB=`eval "db_report_string '${i}' 'true' 'true'"`
 
 
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
