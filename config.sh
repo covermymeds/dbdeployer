@@ -88,7 +88,7 @@ auto_deploy_folders_enabled='false'
 #folders that will include files in report when changes are found based on checksum
 #Requires calculate_checksum option to be set to true. These folders are deployed
 #after the list of deployment_folders.
-auto_deploy_folders='sprocs:|functions:|views:|synonyms:|utility'
+auto_deploy_folders='sprocs:|functions:|views:|synonyms:|triggers'
 
 #environment exclusion list (add folders inside database dir that aren't environments)
 env_exclude="/:|output:|archive:|rollback:|grants:|thesaurus"
