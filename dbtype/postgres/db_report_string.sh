@@ -2,6 +2,7 @@
 db_report_string() {
   _deployment_type="${1}"
   _include_checksum="${2}"
+  _is_autodeploy="${3}"
 
   deployment_tracker_table_exists
 
@@ -23,10 +24,10 @@ db_report_string() {
     AND (
       is_active is true
     "
-    
-    if [ "${auto_deploy_folders_enabled}" = 'true' ]
+
+    if [[ "${auto_deploy_folders_enabled}" = 'true' && "${is_auto_deploy}" = 'true' ]]
     then
-      _sqlstring="${_sqlstring}    
+      _sqlstring="${_sqlstring}
       OR 
         deployment_type IN ('${_deployment_type}')
       "
@@ -54,6 +55,7 @@ db_report_string() {
     fi
   fi
 
+  #echo ${_sqlstring}
   unset _deployment_type
 
   return ${return_val}

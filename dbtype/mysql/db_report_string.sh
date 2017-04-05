@@ -2,6 +2,7 @@
 db_report_string() {
   _deployment_type="$1"
   _include_checksum="$2"
+  _is_autodeploy="${3}"
 
   deployment_tracker_table_exists
 
@@ -14,14 +15,30 @@ db_report_string() {
 
   if [ $? -eq 0 ]
   then
-  
-    ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -N -s --skip-pager -e "
+
+    _sqlstring="
     SELECT CONCAT('${db_basedir}/','${dbname}','/',deployment_type,'/',deployment_name${checksum_value}) 
     FROM deployment_tracker 
     WHERE dbname = '${db_destination_name}' 
     AND deployment_type = '${_deployment_type}' 
     AND deployment_outcome in ('OK','SKIP')
-    AND is_active is true;" | sort -rn
+    AND (
+      is_active is true
+    "
+
+    if [[ "${auto_deploy_folders_enabled}" = 'true' && "${is_auto_deploy}" = 'true' ]]
+    then
+      _sqlstring="${_sqlstring}
+      OR·
+        deployment_type IN ('${_deployment_type}')
+      "
+    fi
+    _sqlstring="${_sqlstring}
+    );
+    "
+
+    ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -N -s --skip-pager -e "
+    ${_sqlstring}" | sort -rn
     
     if [ $? -ne 0 ] 
     then

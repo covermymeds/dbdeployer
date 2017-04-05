@@ -120,6 +120,7 @@ do
     -m|--module-list)
       shift
       module_list="${1}"
+      module_list_cli="-m ${1}"
       shift
       ;;
     -n|--db-destination-name)

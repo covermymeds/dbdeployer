@@ -12,7 +12,7 @@ deployment_report() {
   do
     echo "Differences for ${i}:"
     DB=`eval "db_report_string '${i}'"`
-
+    #echo "DB: ${DB}"
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
@@ -65,7 +65,7 @@ deployment_report() {
         if [ -d "${deploy_folder}" ]
         then
           echo "Differences for ${i}:"
-          DB=`eval "db_report_string '${i}' 'true'"`
+          DB=`eval "db_report_string '${i}' 'true' 'true'"`
 
 
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
