@@ -6,7 +6,6 @@ Add plugin support and Git plugin
   - Added plugin functionality
   - Added plugin for Git
   - Adjusted the way auto deploy folders work in db_report_string dbtype functions
-  - Changed auto_deploy_folders to true by default
 
 ## 2016-05-18 Release 1.2.1
 ### Summary

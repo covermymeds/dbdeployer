@@ -83,7 +83,7 @@ url_regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=
 deployment_folders='schema:|seed:|changes'
 
 #whether or not to include auto_deploy_folders in the report for deployment
-auto_deploy_folders_enabled='true'
+auto_deploy_folders_enabled='false'
 
 #folders that will include files in report when changes are found based on checksum
 #Requires calculate_checksum option to be set to true. These folders are deployed
