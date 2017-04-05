@@ -27,7 +27,7 @@ then
 fi
 
 #verify directories exist
-for x in dbtype dbtype/postgres 'functions'  sample_structure deployments ${bin_dir} ${config_base_dir} ${function_base_dir} ${package_base_data_dir}
+for x in dbtype dbtype/postgres 'functions' sample_structure deployments ${bin_dir} ${config_base_dir} ${function_base_dir} ${package_base_data_dir}
 do
   if ! [ -d "${x}" ]
   then
