@@ -117,6 +117,12 @@ do
       skip_cli='-k'
       shift
       ;;
+    -m|--module-list)
+      shift
+      module_list="${1}"
+      module_list_cli="-m ${1}"
+      shift
+      ;;
     -n|--db-destination-name)
       shift
       db_destination_name=${1}
@@ -195,6 +201,9 @@ done
 
 #autoload various files
 load_functions_in_dirs "${fn_basedir}/functions|${fn_basedir}/dbtype/${dbtype}"
+
+#load plugins/modules
+setup_module_source_list
 
 #combine complete list of folders to be excluded
 env_exclude="${env_exclude}:|${deployment_folders}:|${auto_deploy_folders}"

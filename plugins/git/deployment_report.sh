@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+unset deployment_report
+
+# variables for git-plugin
+branch_to_compare="${branch_to_compare:-origin/master}"
+
 deployment_report() {
   #standard deploy folders
   echo "Running report for database: ${db_destination_name}"
@@ -7,16 +12,35 @@ deployment_report() {
   do
     echo "Differences for ${i}:"
     DB=`eval "db_report_string '${i}'"`
-
+    #echo "DB: ${DB}"
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
-      FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
+      if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
+      then
+        # on master, compare from file system
+        FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
+      else
+        diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+
+        #echo "diff_file: ${diff_files}"
+
+        for x in ${diff_files}
+        do
+          trim_x=`echo $x`
+          FS=`echo -e "${FS}\n${db_basedir}/${trim_x}\n"`
+
+        done
+      fi
+
     else
       FS=''
     fi
 
-    for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
+    #echo -e "FS: \n${FS}"
+
+    #diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | sort -n
+    for x in `diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
     do
       if ! [ -z "${x}" ]
       then
@@ -47,14 +71,21 @@ deployment_report() {
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
           then
             FS_CHECKSUM='' #initialize empty var
-            FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+            if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
+            then
+              FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+            else
+              FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+            fi
+
             for j in ${FS_LIST}
             do
-  #            echo "file: $j"
+              # echo "file: $j"
               FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
-  #            echo "FS_CHECKSUM: $FS_CHECKSUM"
+              # echo "FS_CHECKSUM: $FS_CHECKSUM"
               FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
             done
+
           else
             FS=''
           fi
@@ -63,7 +94,7 @@ deployment_report() {
   #    echo "FS: $FS"
 
 
-          for x in `diff -B -b <(echo "${DB}") <(echo "${FS}") | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
+          for x in `diff -B -b <(echo "${DB}" | sort -n) <(echo "${FS}" | sort -n) | grep ">" | grep '.sql' | sed 's/^..//' | sort -n | xargs`
           do
             if ! [ -z "${x}" ]
             then
@@ -75,4 +106,6 @@ deployment_report() {
       done
     fi #end calculate_checksum check
   fi #end auto deploy folders enabled
+
+  echo "Provided by git plugin"
 }

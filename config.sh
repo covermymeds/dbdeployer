@@ -41,6 +41,16 @@ db_basedir='/var/lib/dbdeployer/databases'
 #them somewhere else for whatever reason, you can update the path here
 fn_basedir='/usr/libexec/dbdeployer'
 
+#this is where the modules or plugin directories should be deployed. Just
+#copy any plugin directories to this location and reference them in the
+#order in which they should be loaded using the -m|--module-list variable
+module_basedir='/usr/libexec/dbdeployer/plugins'
+
+#this is the variable that holds the list of plugins to load. They are loaded
+#in the order specified, so the last plugin listed would win if two plugins
+#override the same function
+module_list=
+
 #user to make sure the script is being run as
 run_as='postgres'
 
@@ -78,7 +88,7 @@ auto_deploy_folders_enabled='false'
 #folders that will include files in report when changes are found based on checksum
 #Requires calculate_checksum option to be set to true. These folders are deployed
 #after the list of deployment_folders.
-auto_deploy_folders='sprocs:|functions:|utility'
+auto_deploy_folders='sprocs:|functions:|views:|synonyms:|triggers'
 
 #environment exclusion list (add folders inside database dir that aren't environments)
 env_exclude="/:|output:|archive:|rollback:|grants:|thesaurus"
