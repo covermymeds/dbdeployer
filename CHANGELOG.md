@@ -6,6 +6,7 @@ Add plugin support and Git plugin
   - Added plugin functionality
   - Added plugin for Git
   - Adjusted the way auto deploy folders work in db_report_string dbtype functions
+  - Auto deploy will not redeploy a file from master automatically if it has had a checksum that has been deployed in the past (this protects a situation where an environment is ahead of master, you can force a deploy of an auto deploy file still by using the -f flag with the path to the file).
 
 ## 2016-05-18 Release 1.2.1
 ### Summary
