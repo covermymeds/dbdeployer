@@ -12,6 +12,8 @@ function_base_dir='/usr/libexec'                              #location to insta
 function_dir="${function_base_dir}/${package_name}"           #full path to functions dir
 plugin_dir="${function_dir}"                                  #location for plugin/module directory
 log_dir="/var/log/${package_name}"                            #default log location
+user_name='dbdeployer'                                        #name of user to deploy
+user_home_dir="$package_data_dir"                             #user home directory
 group_name='dbdeployer'                                       #name of the group (used for log file permission)
 
 
@@ -51,6 +53,17 @@ if [ ${error_state} = 'true' ]
 then
   echo "Errors were found in the pre-check, exiting"
   exit 1
+fi
+
+#create user
+if [ `grep "^${user_name}:" /etc/passwd | wc -l` -eq 0 ]
+then
+  useradd -r -g ${group_name} -m -d ${user_home_dir} ${user_name}
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to add user ${user_name} to system, exiting"
+    exit 1
+  fi #end error check
 fi
 
 #make necessary directories on filesystem
@@ -133,17 +146,6 @@ then
   echo "Failed to copy deployments directory, exiting"
   exit 1
 fi #end error check
-
-#create group
-if [ `grep "${group_name}" /etc/group | wc -l` -eq 0 ]
-then
-  groupadd "${group_name}"
-  if [ $? -ne 0 ]
-  then
-    echo "Failed to add group to system, exiting"
-    exit 1
-  fi #end error check
-fi
 
 #set permissions on log_dir
 chown root:${group_name} ${log_dir}
