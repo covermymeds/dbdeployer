@@ -1,4 +1,3 @@
-#FROM registry.cmmint.net/cmm/centos7:latest
 FROM centos:7
 ENV  ACCEPT_EULA 'y'
 ENV PATH /opt/mssql-tools/bin/:$PATH
