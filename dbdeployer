@@ -3,7 +3,7 @@
 #script needs at a minimum 1 parameter, if less than that are passed, show usage
 if [ $# -eq 0 ]
 then
-	show_help='true'
+  show_help='true'
 fi
 
 #seting up autoloader function that isn't included in directories that are auto-loaded
@@ -358,11 +358,11 @@ then
     exit 1
   fi
 
-	check_server_port
-	if [ $? -ne 0 ]
-	then
-		exit 1
-	fi
+  check_server_port
+  if [ $? -ne 0 ]
+  then
+    exit 1
+  fi
 
   set_port_flags
 fi
@@ -370,14 +370,14 @@ fi
 #if -d exists, overwrite database name
 if ! [ -z "${_dbname}" ]
 then
-	dbname="${_dbname}"
+  dbname="${_dbname}"
 fi
 
 #if -n exists, overwrite destination database name
 #otherwise default to using the dbname
 if [ -z "${db_destination_name}" ]
 then
-	db_destination_name="${dbname}"
+  db_destination_name="${dbname}"
 fi
 
 #deployments database should already exist even if it is empty, verify it does
@@ -403,12 +403,12 @@ then
     echo "You can not use the -x and the -X options together. The -X option encompases the drop option for dropping and reloading the database"
     exit 1
   fi
-	#check report
+  #check report
   if [ "${report}" = "true" ]
-	then
-		echo "The report flag is not compatible with an option that drops the database."
-		exit 1
-	fi
+  then
+    echo "The report flag is not compatible with an option that drops the database."
+    exit 1
+  fi
   #check skip
   if [ "${skip}" = "true" ]
   then
@@ -416,11 +416,11 @@ then
     exit 1
   fi
   #check that dbname is set
-	if [ -z "${dbname}" ]
-	then
-		echo "You must specify the database you want to drop and reload (-d|--database)"
-		exit 1
-	fi
+  if [ -z "${dbname}" ]
+  then
+    echo "You must specify the database you want to drop and reload (-d|--database)"
+    exit 1
+  fi
   #check that dbname/db_destination_name is not deployments database
   if [ "${deployment_db}" = "${db_destination_name}" ]
   then
@@ -432,9 +432,9 @@ fi
 #verify that we have a database passed or calculated or exit
 if [ -z "${dbname}" ]
 then
-	echo "A database name was not specified and could not be found by the file path specified.  Please add a"
-	echo "database declaration or file to the command so we know what to deploy."
-	exit 1
+  echo "A database name was not specified and could not be found by the file path specified.  Please add a"
+  echo "database declaration or file to the command so we know what to deploy."
+  exit 1
 fi
 
 
@@ -501,9 +501,9 @@ fi
 #checks verbosity
 if ! [ -z ${verbose} ]
 then
-	if [ "${verbose}" = 'true' ]
-	then
-		echo "
+  if [ "${verbose}" = 'true' ]
+  then
+    echo "
     file_dir: ${file_dir}
     file_path_dirs: ${file_path_dirs}
     array_count: ${array_count}
@@ -532,7 +532,7 @@ then
     deployed_as: ${deployed_as}
     calculate_checksum: ${calculate_checksum}
     "
-	fi
+  fi
 fi
 
 ###################################
@@ -552,24 +552,24 @@ fi
 if ! [ -z "${db_destination_name}" ]
 then
   db_exists "${db_destination_name}"
-	if [ $? -ne 0 ]
+  if [ $? -ne 0 ]
   then
-		echo "${db_destination_name} database does not exist, Do you want to create it?"
-		if [ "${confirm}" = 'true' ]
-		then
-			echo "Confirm flag is set, creating automatically..."
-			create_database "${db_destination_name}"
-		else
+    echo "${db_destination_name} database does not exist, Do you want to create it?"
+    if [ "${confirm}" = 'true' ]
+    then
+      echo "Confirm flag is set, creating automatically..."
+      create_database "${db_destination_name}"
+    else
 
-			select yn in "Yes" "No"; do
-				case ${yn} in
-						Yes ) create_database "${db_destination_name}"; break;;
-						No ) exit;;
-				esac
-			done
-		fi # end confirm
+      select yn in "Yes" "No"; do
+        case ${yn} in
+          Yes ) create_database "${db_destination_name}"; break;;
+          No ) exit;;
+        esac
+      done
+    fi # end confirm
 
-	fi # end database exists
+  fi # end database exists
 fi # end variable empty check
 
 #check that the file filepath is set and that the file exists
@@ -673,7 +673,7 @@ then
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) 
+          Yes )
             drop_and_reload "${dbname}" "${db_destination_name}"
             _DAR=$?
             break;;
@@ -705,7 +705,7 @@ then
 
     select yn in "Yes" "No"; do
       case ${yn} in
-          Yes ) 
+          Yes )
             drop_and_mark_database "${db_destination_name}"
             _drop_database=$?
             echo "Dropping database ${db_destination_name}"
@@ -725,7 +725,7 @@ fi
 #already validated all filepath stuff, execute query
 if ! [ -z "${file_path}" ]
 then
-  
+
   # set checksum value for file unless disabled
   if [ "${calculate_checksum}" != "false" ]
   then
