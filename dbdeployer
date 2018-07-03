@@ -275,7 +275,7 @@ then
     exit 1
   fi
 
-  IFS='/' file_array=(${file_path})
+  IFS='/' read -ra file_array <<< "$file_path"
   array_count=`echo ${#file_array[@]}`
   if [ ${array_count} -gt 2 ]
   then
