@@ -6,14 +6,14 @@ function db_exists() {
   rc=$?
   if [ $rc -eq 0 ]
   then
-# the below way should work if you are just listing databases but is more intense than using system tables
-# I commented this out and left in place in the event another engine needs to utilize this method
-#    if [ `${db_binary} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -c '\l' | \
-#    awk -F'|' {'print $1'} | \
-#    sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | \
-#    grep "^${_check_db}$" | \
-#    wc -l | \
-#    xargs` -eq 1 ]
+    # the below way should work if you are just listing databases but is more intense than using system tables
+    # I commented this out and left in place in the event another engine needs to utilize this method
+    #    if [ `${db_binary} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -c '\l' | \
+    #    awk -F'|' {'print $1'} | \
+    #    sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | \
+    #    grep "^${_check_db}$" | \
+    #    wc -l | \
+    #    xargs` -eq 1 ]
 
     query_output=`${switch_user_flag} ${db_binary} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -c "
     select coalesce ((SELECT count(datname)
@@ -30,7 +30,7 @@ function db_exists() {
   else
     rc=1
   fi
-  
+
   unset _check_db
 
   if [ ${rc} -eq 0 ]

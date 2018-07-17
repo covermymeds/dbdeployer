@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 function setup_module_source_list() {
 
-  old_IFS=$IFS
-
-  IFS=','
+  local IFS=','
   local module_dir_array=(${module_list})
   local module_array_count=`echo ${#module_dir_array[@]}`
 
@@ -25,6 +23,5 @@ function setup_module_source_list() {
       fi
     done
   fi
-  IFS=${old_IFS}
 
 }

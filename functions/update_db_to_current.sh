@@ -5,7 +5,7 @@ function update_db_to_current() {
   _db_destination_name="$2"
 
   report_var=`${script_name} -D ${db_basedir} -r -d "${_dbname}" -n "${_db_destination_name}" ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${module_list_cli} | grep "${script_name} -f"`
-  IFS=$'\n'
+  local IFS=$'\n'
   for j in `echo -e "${report_var}"`
   do
     echo "Running: ${j}"
