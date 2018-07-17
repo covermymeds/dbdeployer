@@ -15,7 +15,7 @@ function db_exists() {
     #    wc -l | \
     #    xargs` -eq 1 ]
 
-    query_output=`${switch_user_flag} ${db_binary} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -c "
+    query_output=`${switch_user_flag} ${db_binary} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -d postgres -c "
     select coalesce ((SELECT count(datname)
     FROM pg_database
     where datname= '${_check_db}'
