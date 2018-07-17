@@ -1,4 +1,4 @@
 function set_password_flags() {
-  echo "PGPASSWORD: ${PGPASSWORD}"
+  PGPASSWORD=${password}
   return 0
 }
