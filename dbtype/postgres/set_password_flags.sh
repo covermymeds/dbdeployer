@@ -1,4 +1,4 @@
 function set_password_flags() {
-  PGPASSWORD=${password}
+  export PGPASSWORD=${password}
   return 0
 }
