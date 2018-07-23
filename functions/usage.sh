@@ -10,6 +10,9 @@ function usage() {
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -C|--checksum-off               No arguments, turns off checksum logging
+  
+  --disable-ping-check            No arguments, turns off ping check when server
+                                    flag is in use
   -d|--database [name]            Database name to work with (will attempt to 
                                     auto-discover if -f is used, but can be 
                                     overwritten by using this variable)

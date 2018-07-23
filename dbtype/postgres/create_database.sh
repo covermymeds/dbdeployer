@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function create_database() {
   _createdb="${1}"
-  ${db_binary} ${server_flag} ${user_flag} ${port_flag} -c "create database \"${_createdb}\";"
+  ${db_binary} ${server_flag} ${user_flag} ${port_flag} -d postgres -c "create database \"${_createdb}\";"
   rc=$?
   unset _createdb
   if [ ${rc} -eq 0 ]

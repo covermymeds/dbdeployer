@@ -97,6 +97,10 @@ do
       db_basedir=${1}
       shift
       ;;
+    --disable-ping-check)
+      export disable_ping_check='true'
+      shift
+      ;;
     -e|--environment)
       shift
       environment=${1}
@@ -316,14 +320,17 @@ then
   fi
 fi
 
-
-#check that host/server responds to pings
+#check that host/server responds to pings unless check is disabled
 if ! [ -z "${server}" ]
 then
-  check_server_ping
-  if [ $? -ne 0 ]
+  if ! [ "${disable_ping_check}" = 'true' ]
   then
-    exit 1
+    echo "Checking Server Responds to PING"
+    check_server_ping
+    if [ $? -ne 0 ]
+    then
+      exit 1
+    fi
   fi
   set_server_flags
 fi
