@@ -7,7 +7,7 @@ function deploy_file() {
     _logfile="-L${3}"
   fi
 
-  ${db_binary} ${_db_to_deploy} ${server_flag} ${user_flag} ${port_flag} -1 -X -v 'timing' -v 'ON_ERROR_STOP=1' -a -f "${_deploy_file}" "${_logfile}"
+  ${db_binary} ${_db_to_deploy} ${server_flag} ${user_flag} ${port_flag} ${encryption_flag} -1 -X -v 'timing' -v 'ON_ERROR_STOP=1' -a -f "${_deploy_file}" "${_logfile}"
   rc=$?
 
   unset _db_to_deploy

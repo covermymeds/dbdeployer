@@ -6,7 +6,7 @@ function deployed_check() {
   if [ $? -eq 0 ]
   then
 
-    if [ `${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -t -c "
+    if [ `${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} ${encryption_flag} -1 -X -q -t -c "
     select coalesce ((select count(*) from deployment_tracker t
     where dbname = '${db_destination_name}' 
     and ( deployment_outcome = 'OK' OR deployment_outcome = 'SKIP' )

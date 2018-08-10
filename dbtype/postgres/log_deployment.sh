@@ -60,7 +60,7 @@ function log_deployment() {
   ;
   COMMIT;"
 
-  echo "${_query_string}" | ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} > /dev/null 2>&1
+  echo "${_query_string}" | ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} ${encryption_flag} > /dev/null 2>&1
   rc=$?
 
   unset _deploy_db

@@ -36,7 +36,7 @@ db_report_string() {
     );
     "
 
-    ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -A -t -c "
+    ${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} ${encryption_flag} -1 -X -q -A -t -c "
     ${_sqlstring}
     " | sort -rn
     

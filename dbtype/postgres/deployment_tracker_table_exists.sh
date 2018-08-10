@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 deployment_tracker_table_exists() {
 
-  _table_exists=`${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} -1 -X -q -A -t -c "
+  _table_exists=`${db_binary} ${deployment_db} ${server_flag} ${user_flag} ${port_flag} ${encryption_flag} -1 -X -q -A -t -c "
   SELECT EXISTS (
     SELECT 1 
     FROM   pg_catalog.pg_class c
