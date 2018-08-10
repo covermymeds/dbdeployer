@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 deployment_tracker_table_exists() {
 
-  _table_exists=`${db_binary} -d ${deployment_db} ${server_flag}${port_flag} ${user_flag} ${password_flag} -l0 -h -1 -b -Q "
+  _table_exists=`${db_binary} -d ${deployment_db} ${server_flag} ${port_flag} ${encryption_flag} ${user_flag} ${password_flag} -l0 -h -1 -b -Q "
   SET NOCOUNT ON;
   if OBJECT_ID('deployments.dbo.deployment_tracker') is not NULL
   select 't';"`

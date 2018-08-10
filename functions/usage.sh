@@ -10,7 +10,7 @@ function usage() {
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -C|--checksum-off               No arguments, turns off checksum logging
-  
+
   --disable-ping-check            No arguments, turns off ping check when server
                                     flag is in use
   -d|--database [name]            Database name to work with (will attempt to 
@@ -18,8 +18,10 @@ function usage() {
                                     overwritten by using this variable)
   -D|--database-dir [directory]   Directory to deploy databases from
                                     (default /var/lib/dbdeployer)
-  -e|--environment [environment]  Environment to use 
+  -e|--environment [environment]  Environment to use
                                     (if environments exist in command tree)
+  -E|--force-encryption           Forces tls to be used with connection
+                                    (default false)
   -f|--file [filename]            Filename to be deployed 
                                     (requires path from ${script_name} script)
   -k|--skip                       Causes deployment to be skipped but file is
