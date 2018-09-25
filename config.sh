@@ -51,6 +51,8 @@ module_basedir='/usr/libexec/dbdeployer/plugins'
 #override the same function
 module_list=
 
+#this variable will force the client to use encryption or fail
+force_encryption='false'
 #user to make sure the script is being run as
 run_as='postgres'
 

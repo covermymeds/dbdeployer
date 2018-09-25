@@ -107,6 +107,10 @@ do
       environment_flag="-e ${environment}"
       shift
       ;;
+    -E|--force-encryption)
+      force_encryption='true'
+      shift
+      ;;
     -f|--file)
       shift
       file_path=${1}
@@ -325,7 +329,7 @@ if ! [ -z "${server}" ]
 then
   if ! [ "${disable_ping_check}" = 'true' ]
   then
-    echo "Checking Server Responds to PING"
+    # echo "Checking Server Responds to PING"
     check_server_ping
     if [ $? -ne 0 ]
     then
@@ -346,6 +350,12 @@ then
   fi
 
   set_password_flags
+fi
+
+#setup to use encryption if true
+if [ "${force_encryption}" = 'true' ]
+then
+  set_encryption_flags
 fi
 
 #setup user if it is passed in

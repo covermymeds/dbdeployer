@@ -1,3 +1,14 @@
+## 2018-09-24 Relase 1.4.1
+### Summary
+Encryption, Remote Deploy, code cleanup
+
+### Changes
+  - MSSQL and Postgres can now enforce that they only connect with encryption
+  - PSQL can now remote deploy with user/pass/host settings in the same way
+  that mssql does.
+  - Clean up and localize IFS usage in various files
+  - Add containerization features for docker
+
 ## 2016-05-18 Release 1.3.1
 ### Summary
 Add plugin support and Git plugin
