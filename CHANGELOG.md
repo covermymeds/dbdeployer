@@ -1,3 +1,10 @@
+## 2019-01-09 Relase 1.4.2
+### Summary
+Auto deploy folder bug fix
+
+### Changes
+  - Fix pathing issue when using auto deploy folders
+
 ## 2018-09-24 Relase 1.4.1
 ### Summary
 Encryption, Remote Deploy, code cleanup
