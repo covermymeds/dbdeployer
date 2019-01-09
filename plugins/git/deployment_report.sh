@@ -74,17 +74,25 @@ deployment_report() {
             if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
             then
               FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
+
+              for j in ${FS_LIST}
+              do
+                # echo "file: $j"
+                FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
+                # echo "FS_CHECKSUM: $FS_CHECKSUM"
+                FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
+              done
             else
               FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+              for j in ${FS_LIST}
+              do
+                # echo "file: $j"
+                FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
+                # echo "FS_CHECKSUM: $FS_CHECKSUM"
+                FS=`echo -e "${FS}\n${db_basedir}/$j--dbdeployer-md5sum--$FS_CHECKSUM"`
+              done
             fi
 
-            for j in ${FS_LIST}
-            do
-              # echo "file: $j"
-              FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
-              # echo "FS_CHECKSUM: $FS_CHECKSUM"
-              FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
-            done
 
           else
             FS=''
