@@ -147,6 +147,11 @@ do
       port_cli="-p ${port}"
       shift
       ;;
+    --post-deploy-script)
+      shift
+      post_deploy_script="${1}"
+      shift
+      ;;
     -P|--password)
       shift
       password="${1}"
@@ -815,6 +820,21 @@ then
   if [ $? -ne 0 ]
   then
     echo "One of the files did not deploy correctly.  No files past that file have been deployed"
+    exit 1
+  fi
+
+fi
+
+if [ "${report}" != "true" ]
+then
+  if ! [ -z "${post_deploy_script}" ]
+  then
+    echo "entered post deploy script"
+    exec_post_deploy_script "${post_deploy_script}"
+  fi
+  if [ $? -ne 0 ]
+  then
+    echo "The post deploy script failed to deploy."
     exit 1
   fi
 fi

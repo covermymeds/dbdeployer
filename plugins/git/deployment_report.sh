@@ -16,6 +16,7 @@ deployment_report() {
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
+      cd ${db_basedir}
       if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
       then
         # on master, compare from file system
