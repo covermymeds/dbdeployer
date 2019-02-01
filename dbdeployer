@@ -829,7 +829,6 @@ if [ "${report}" != "true" ]
 then
   if ! [ -z "${post_deploy_script}" ]
   then
-    echo "entered post deploy script"
     exec_post_deploy_script "${post_deploy_script}"
   fi
   if [ $? -ne 0 ]

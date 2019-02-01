@@ -5,7 +5,7 @@ function exec_post_deploy_script() {
 
   # database name will automatically be passed to script with -d flag
 
-  echo "Executing script post dbdeployer run: ${_script_to_exec} -d $dbname"
+  echo "Executing script post dbdeployer run: ${_script_to_exec} -d ${dbname} -n ${db_destination_name}"
   script_result=`$_script_to_exec -d $dbname`
 
   if [ $? -ne 0 ]

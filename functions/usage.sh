@@ -43,8 +43,9 @@ function usage() {
                                     command to find/replace values
   -p|--port [port]                Database port to connect on.  (requires -s|server
                                     to be specified)
-  --post-deploy-script [script]   Can be a script name or command. This is run with
-                                    'exec' after the update command completes.
+  --post-deploy-script [script]   Can be a script name or command. This is run when
+                                    this variable is set and the script is not called
+                                    with the report flag.
   -P|--password [password]        Database password to use.  (requires -U|username
                                     to be specified)
   -r|--report                     No argument, show report of what needs

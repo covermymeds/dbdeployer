@@ -8,6 +8,10 @@ deployment_report() {
   #standard deploy folders
   echo "Running report for database: ${db_destination_name}"
   IFS=':|' read -a folder_list <<< "${deployment_folders}"
+
+  #ensure we are in the directory where the checkout occurs since we will be using git
+  cd ${db_basedir}
+
   for i in ${folder_list[@]}
   do
     echo "Differences for ${i}:"
@@ -16,7 +20,6 @@ deployment_report() {
 
     if [ `ls "${db_basedir}"/"${dbname}"/"${i}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
     then
-      cd ${db_basedir}
       if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
       then
         # on master, compare from file system
