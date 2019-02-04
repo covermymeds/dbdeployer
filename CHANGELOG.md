@@ -1,3 +1,12 @@
+## 2019-02-1 Relase 1.4.3
+### Summary
+Bug Fix, added post deployment script execution
+
+### Changes
+  - Fix issue when not in git checkoiut location using git plugin
+  - Added --post-deploy-script option to exec arbitrary script at end of run
+    - This passes `-d $dbname` and `-n $db_destination_name` to script passed in
+
 ## 2019-01-09 Relase 1.4.2
 ### Summary
 Auto deploy folder bug fix
