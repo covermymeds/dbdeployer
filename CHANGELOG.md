@@ -1,6 +1,6 @@
 ## 2019-02-08 Release 1.5.2
 ### Summary
-Bug Fix for docker implementation
+Add git binary to image and add version flag
 
 ### Changes
   - Added git to the docker file as a dependency to support the git plugin
