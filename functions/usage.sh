@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 function usage() {
 
-  source /etc/dbdeployer/dbdeployer_release
-
   echo "
 ${script_name} version: $version
 ${script_name} [options] 
@@ -72,6 +70,7 @@ ${script_name} [options]
                                     and executes findings
   -v|--verbose                    No argument, shows what the variables are that
                                     are being used at time of deployment
+  -V|--version                    Show version information and exit
   -x|--drop-database              No argument, please note this is a desctructive change.
                                     This will drop the database specified
                                     (requires -d|--database to be specified)

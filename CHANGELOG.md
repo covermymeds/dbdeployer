@@ -1,4 +1,4 @@
-## 2019-02-1 Relase 1.5.2
+## 2019-02-08 Release 1.5.2
 ### Summary
 Bug Fix for docker implementation
 
@@ -6,7 +6,7 @@ Bug Fix for docker implementation
   - Added git to the docker file as a dependency to support the git plugin
   - Added version to help output
 
-## 2019-02-1 Relase 1.5.1
+## 2019-02-01 Release 1.5.1
 ### Summary
 Bug Fix, added post deployment script execution
 
