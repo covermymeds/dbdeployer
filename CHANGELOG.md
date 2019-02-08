@@ -15,14 +15,14 @@ Bug Fix, added post deployment script execution
   - Added --post-deploy-script option to exec arbitrary script at end of run
     - This passes `-d $dbname` and `-n $db_destination_name` to script passed in
 
-## 2019-01-09 Relase 1.4.2
+## 2019-01-09 Release 1.4.2
 ### Summary
 Auto deploy folder bug fix
 
 ### Changes
   - Fix pathing issue when using auto deploy folders
 
-## 2018-09-24 Relase 1.4.1
+## 2018-09-24 Release 1.4.1
 ### Summary
 Encryption, Remote Deploy, code cleanup
 
