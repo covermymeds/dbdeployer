@@ -1,4 +1,12 @@
-## 2019-02-1 Relase 1.5.1
+## 2019-02-08 Release 1.5.2
+### Summary
+Add git binary to image and add version flag
+
+### Changes
+  - Added git to the docker file as a dependency to support the git plugin
+  - Added version to help output
+
+## 2019-02-01 Release 1.5.1
 ### Summary
 Bug Fix, added post deployment script execution
 
@@ -7,14 +15,14 @@ Bug Fix, added post deployment script execution
   - Added --post-deploy-script option to exec arbitrary script at end of run
     - This passes `-d $dbname` and `-n $db_destination_name` to script passed in
 
-## 2019-01-09 Relase 1.4.2
+## 2019-01-09 Release 1.4.2
 ### Summary
 Auto deploy folder bug fix
 
 ### Changes
   - Fix pathing issue when using auto deploy folders
 
-## 2018-09-24 Relase 1.4.1
+## 2018-09-24 Release 1.4.1
 ### Summary
 Encryption, Remote Deploy, code cleanup
 

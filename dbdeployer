@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#pull in version info
+source /etc/dbdeployer/dbdeployer_release
+
 #script needs at a minimum 1 parameter, if less than that are passed, show usage
 if [ $# -eq 0 ]
 then
@@ -193,6 +196,10 @@ do
       verbose='true'
       shift
       ;;
+    -V|--version)
+      display_version='true'
+      shift
+      ;;
     -x|--drop-database)
       drop_db='true'
       shift
@@ -244,6 +251,16 @@ if [ "${show_help}" = 'true' ]
 then
   usage
   exit 1
+fi
+
+#################################
+#  Show version if necessary
+#################################
+
+if [ "${display_version}" = 'true' ]
+then
+  echo "${script_name} version: ${version}"
+  exit 0
 fi
 
 ###########################################
