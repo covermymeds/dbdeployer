@@ -25,7 +25,7 @@ deployment_report() {
         # on master, compare from file system
         FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
       else
-        diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+        diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/[^/]*\.sql$\" | xargs"`
 
         #echo "diff_file: ${diff_files}"
 
