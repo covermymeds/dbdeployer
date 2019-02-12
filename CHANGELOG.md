@@ -1,3 +1,10 @@
+## 2019-02-12 Release 1.5.3
+### Summary
+Bug Fix
+
+### Changes
+  - Fix bug in git plugin allowing for proper execution of environment folders
+
 ## 2019-02-08 Release 1.5.2
 ### Summary
 Add git binary to image and add version flag
