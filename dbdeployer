@@ -100,6 +100,10 @@ do
       db_basedir=${1}
       shift
       ;;
+    --disable-modules)
+      export disable_modules='true'
+      shift
+      ;;
     --disable-ping-check)
       export disable_ping_check='true'
       shift
@@ -222,8 +226,11 @@ done
 #autoload various files
 load_functions_in_dirs "${fn_basedir}/functions|${fn_basedir}/dbtype/${dbtype}"
 
-#load plugins/modules
-setup_module_source_list
+if [ "${disable_modules}" != 'true' ]
+then
+  #load plugins/modules
+  setup_module_source_list
+fi
 
 #combine complete list of folders to be excluded
 env_exclude="${env_exclude}:|${deployment_folders}:|${auto_deploy_folders}"
