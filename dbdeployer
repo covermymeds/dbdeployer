@@ -78,6 +78,10 @@ do
       run_as=${1}
       shift
       ;;
+    --allow-drop-database)
+      allow_drop_database='true'
+      shift
+      ;;
     -a|--auto-deploy-enabled)
       auto_deploy_folders_enabled='true'
       shift
