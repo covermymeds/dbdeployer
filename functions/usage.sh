@@ -13,7 +13,8 @@ ${script_name} [options]
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -C|--checksum-off               No arguments, turns off checksum logging
-
+  --disable-modules               No arguments, turns off any modules/plugins from
+                                    being loaded
   --disable-ping-check            No arguments, turns off ping check when server
                                     flag is in use
   -d|--database [name]            Database name to work with (will attempt to 

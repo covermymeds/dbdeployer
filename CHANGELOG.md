@@ -1,3 +1,10 @@
+## 2019-02-12 Release 1.5.4
+### Summary
+Add disable feature for plugins
+
+### Changes
+  - Flag to disable any plugins that are inherited via config
+
 ## 2019-02-12 Release 1.5.3
 ### Summary
 Bug Fix
