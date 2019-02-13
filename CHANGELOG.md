@@ -1,3 +1,10 @@
+## 2019-02-13 Release 1.5.6
+### Summary
+Add cli override for parameters
+
+### Changes
+  - add override for the --allow-drop-databases command option
+
 ## 2019-02-12 Release 1.5.4
 ### Summary
 Add disable feature for plugins

@@ -6,6 +6,7 @@ ${script_name} version: $version
 ${script_name} [options] 
   -A|--run-as [run-as-user]       Verifies that specified user is running script
                                     (default: postgres)
+  --allow-drop-database           Override the allow_drop_database config option
   -a|--auto-deploy-enabled        Enables folders specified in auto_deploy_folders
                                     to show up in deployment report and updates
                                     based on changes in checksum
