@@ -1,9 +1,10 @@
-## 2019-02-13 Release 1.5.6
+## 2019-02-14 Release 1.5.5
 ### Summary
-Add cli override for parameters
+Add cli override for parameters,fix run as implementation
 
 ### Changes
   - add override for the --allow-drop-databases command option
+  - fix run as implementation to pass through to forked processes
 
 ## 2019-02-12 Release 1.5.4
 ### Summary
