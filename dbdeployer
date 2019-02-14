@@ -76,6 +76,7 @@ do
     -A|--run-as)
       shift
       run_as=${1}
+      run_as_cli="-A ${1}"
       shift
       ;;
     --allow-drop-database)
