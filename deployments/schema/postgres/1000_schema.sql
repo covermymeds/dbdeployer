@@ -7,10 +7,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
-
 
 CREATE FUNCTION update_updated_at_column() RETURNS trigger
     LANGUAGE plpgsql
