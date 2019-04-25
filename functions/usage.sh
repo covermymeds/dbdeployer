@@ -51,7 +51,7 @@ ${script_name} [options]
   --post-deploy-script [script]   Can be a script name or command. This is run when
                                     this variable is set and the script is not called
                                     with the report flag.
-  -P|--password [password]        Database password to use.  (requires -U|username
+  -P|--password [password]        Database password to use.  (requires -U|user
                                     to be specified)
   -r|--report                     No argument, show report of what needs
                                     deployed (requires -d to be specified)
@@ -65,7 +65,7 @@ ${script_name} [options]
   -s|--server [host/ip]           Server name or IP address
   -T|--dbtype [type]              Database type defined from folders in:
                                     ${fn_basedir}/dbtype
-  -U|--username [username]        Username to connect to the database as
+  -U|--user [username]            Username to connect to the database as
   -u|--update                     No argument, requires database to be specified
                                     and will run all commands to bring a
                                     database to current.  Ultimately runs report
