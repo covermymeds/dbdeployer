@@ -21,7 +21,7 @@ function deployed_check() {
   then
     #returning 0 because the deployments database needs to be able to install itself
     #and we don't want the script to exit if the table doesn't exist when deploying
-    #the deployments databse
+    #the deployments database
     return 0
   else
     return 2
