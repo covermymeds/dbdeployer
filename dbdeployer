@@ -3,13 +3,13 @@
 #pull in version info
 source /etc/dbdeployer/dbdeployer_release
 
-#script needs at a minimum 1 parameter, if less than that are passed, show usage
+#script needs a minimum of 1 parameter, if fewer than that are passed, show usage
 if [ $# -eq 0 ]
 then
   show_help='true'
 fi
 
-#seting up autoloader function that isn't included in directories that are auto-loaded
+#setting up autoloader function that isn't included in directories that are auto-loaded
 load_functions_in_dirs() {
 
   #set functiondirs to string passed in
@@ -224,9 +224,9 @@ do
       ;;
   esac
 done
-############################################
-#  set some other dynamicly loaded variables
-############################################
+##############################################
+#  set some other dynamically loaded variables
+##############################################
 
 #autoload various files
 load_functions_in_dirs "${fn_basedir}/functions|${fn_basedir}/dbtype/${dbtype}"
@@ -451,7 +451,7 @@ then
   #verify drop and reload and drop are not both specified
   if [ "${drop_reload}" = 'true' ] && [ "${drop_db}" = 'true' ]
   then
-    echo "You can not use the -x and the -X options together. The -X option encompases the drop option for dropping and reloading the database"
+    echo "You cannot use the -x and the -X options together. The -X option encompasses the drop option for dropping and reloading the database"
     exit 1
   fi
   #check report
@@ -514,7 +514,7 @@ if [ "${current}" = 'true' ]
 then
   if ! [ -z "${file_path}" ]
   then
-    echo "You can not specify a file and the current flag together.  Please specify current and a database with an optional "
+    echo "You cannot specify a file and the current flag together.  Please specify current and a database with an optional "
     echo "environment, or just the file flag with the path to the file."
     exit 1
   fi
@@ -539,7 +539,7 @@ else
 
 fi
 
-#check if we need an zenvironment variable or not, if environments exist for the db, then we need the specific environment to work with
+#check if we need an environment variable or not, if environments exist for the db, then we need the specific environment to work with
 if [ ${environment_count} -gt 0 ]
 then
   echo "You did not specify an environment, but environments were found on the database you are trying to deploy."
@@ -599,7 +599,7 @@ then
 fi
 
 
-#check that database exists if db_destination_name is defined and offer to create if its not
+#check that database exists if db_destination_name is defined and offer to create if it's not
 if ! [ -z "${db_destination_name}" ]
 then
   db_exists "${db_destination_name}"
@@ -713,7 +713,7 @@ if [ "${drop_reload}" = 'true' ]
 then
 
   #confirm
-  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ($db_destination_name)!"
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ${db_destination_name}!"
   echo "Are you very sure you want to continue?"
   if [ "${confirm}" = 'true' ]
   then
@@ -745,7 +745,7 @@ if [ "${drop_db}" = 'true' ]
 then
 
   #confirm
-  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ($db_destination_name)!"
+  echo "This is a destructive change that WILL DROP THE EXISTING DATABASE ${db_destination_name}!"
   echo "Are you very sure you want to continue?"
   if [ "${confirm}" = 'true' ]
   then
