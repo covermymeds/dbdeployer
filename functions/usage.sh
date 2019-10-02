@@ -14,6 +14,8 @@ ${script_name} [options]
   -c|--confirm                    No arguments, automatically confirms choices 
                                     without user interaction
   -C|--checksum-off               No arguments, turns off checksum logging
+  --check-pending                 No arguments, enables --report and exits with
+                                    0 = no pending migrations, 1 = pending migrations
   --disable-modules               No arguments, turns off any modules/plugins from
                                     being loaded
   --disable-ping-check            No arguments, turns off ping check when server
