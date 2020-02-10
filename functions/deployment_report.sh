@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 deployment_report() {
+  pending_count=0
   #standard deploy folders
   echo "Running report for database: ${db_destination_name}"
   IFS=':|' read -a folder_list <<< "${deployment_folders}"
@@ -21,6 +22,7 @@ deployment_report() {
       if ! [ -z "${x}" ]
       then
         echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+        let "pending_count++"
       fi
     done
   done
@@ -80,6 +82,7 @@ deployment_report() {
             then
               auto_deploy_file=`echo ${x} | awk -F '--dbdeployer-md5sum--' {'print $1'}`
               echo "${script_name} -f "${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+              let "pending_count++"
             fi
           done
         fi #end directory exists check

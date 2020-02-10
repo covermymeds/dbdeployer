@@ -87,6 +87,11 @@ do
       auto_deploy_folders_enabled='true'
       shift
       ;;
+    --check-pending)
+      check_pending='true'
+      report='true'
+      shift
+      ;;
     -c|--confirm)
       confirm='true'
       shift
@@ -706,6 +711,15 @@ fi
 if [ "${report}" == 'true' ]
 then
   deployment_report
+  if [ "${check_pending}" == 'true' ]
+  then
+    if [ "$pending_count" -gt 0 ];
+    then
+      exit 1
+    else
+      exit 0
+    fi
+  fi
 fi
 
 #already validated drop and reload, execute now
