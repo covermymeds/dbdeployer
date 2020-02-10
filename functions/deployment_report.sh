@@ -50,21 +50,10 @@ deployment_report() {
             FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
             for j in ${FS_LIST}
             do
-              #echo "file: $j"
-              FILE_NAME="${j##*/}"
-              FILE_DIR="${j:0:${#j} - ${#FILE_NAME}}"
-              OVERRIDE_FILE="${FILE_DIR}${environment}/$FILE_NAME"
-              if [[ -f $OVERRIDE_FILE ]]
-              then
-                FS_CHECKSUM=`md5sum "${OVERRIDE_FILE}" | awk {'print $1'}`
-                #echo "OVERRIDE_FILE: ${OVERRIDE_FILE}"
-              else
-                FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
-              fi
-
-              #echo "FS_CHECKSUM: $FS_CHECKSUM"
+  #            echo "file: $j"
+              FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
+  #            echo "FS_CHECKSUM: $FS_CHECKSUM"
               FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
-
             done
           else
             FS=''
