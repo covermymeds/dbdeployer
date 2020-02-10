@@ -16,15 +16,20 @@ then
     echo "WARNING: This branch is not current with master. Consider merging"
     echo "         master into your branch. Do you want to continue in the "
     echo "         current state?"
-    select yn in "Yes" "No"; do
-      case ${yn} in
-        Yes ) break;;
-        No ) exit;;
-      esac
-    done
-    echo
-    echo
-    echo
+    if [ "${confirm}" = 'true' ]
+    then
+      echo "Confirm flag is set, continuing automatically..."
+    else
+      select yn in "Yes" "No"; do
+        case ${yn} in
+          Yes ) break;;
+          No ) exit;;
+        esac
+      done
+      echo
+      echo
+      echo
+    fi
   fi
 fi
 
