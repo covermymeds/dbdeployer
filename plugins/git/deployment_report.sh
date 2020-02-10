@@ -118,21 +118,25 @@ deployment_report() {
               FILE_NAME="${j##*/}"
               FILE_DIR="${j:0:${#j} - ${#FILE_NAME}}"
               OVERRIDE_FILE="${FILE_DIR}${environment}/$FILE_NAME"
+              FILE_NOT_FOUND="false"
 
               if [[ -f $OVERRIDE_FILE ]]
               then
                 FS_CHECKSUM=`md5sum "${OVERRIDE_FILE}" | awk {'print $1'}`
                 #echo "OVERRIDE_FILE: ${OVERRIDE_FILE}"
-              else
+              elif [[ -f "${j}" ]]
+              then
                 FS_CHECKSUM=`md5sum "${j}" | awk {'print $1'}`
+              else
+                FILE_NOT_FOUND="true"
               fi
 
               #echo "FS_CHECKSUM: $FS_CHECKSUM"
-              FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
-
+              if [[ "${FILE_NOT_FOUND}" = "false" ]]
+              then
+                FS=`echo -e "${FS}\n$j--dbdeployer-md5sum--$FS_CHECKSUM"`
+              fi
             done
-
-
           else
             FS=''
           fi
