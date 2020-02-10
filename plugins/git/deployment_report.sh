@@ -8,7 +8,7 @@ current_branch="`git rev-parse --abbrev-ref --symbolic-full-name @{u}`"
 # alert if branch to compare is ahead of current branch
 if [ "${current_branch}" != "${branch_to_compare}" ]
 then
-  check_if_branch_current=`git rev-list --left-right --count ${branch_to_compare}...${current_branch} | awk {'print $2'}`
+  check_if_branch_current=`git rev-list --left-right --count ${branch_to_compare}...${current_branch} | awk {'print $1'}`
   #echo "check_if_branch_current: ${check_if_branch_current}"
   if [ $check_if_branch_current -ne 0 ]
   then
