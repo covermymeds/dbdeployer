@@ -3,6 +3,30 @@ unset deployment_report
 
 # variables for git-plugin
 branch_to_compare="${branch_to_compare:-origin/master}"
+current_branch="`git rev-parse --abbrev-ref --symbolic-full-name @{u}`"
+
+# alert if branch to compare is ahead of current branch
+if [ "${current_branch}" != "${branch_to_compare}" ]
+then
+  check_if_branch_current=`git rev-list --left-right --count ${branch_to_compare}...${current_branch} | awk {'print $2'}`
+  #echo "check_if_branch_current: ${check_if_branch_current}"
+  if [ $check_if_branch_current -ne 0 ]
+  then
+    echo 
+    echo "WARNING: This branch is not current with master. Consider merging"
+    echo "         master into your branch. Do you want to continue in the "
+    echo "         current state?"
+    select yn in "Yes" "No"; do
+      case ${yn} in
+        Yes ) break;;
+        No ) exit;;
+      esac
+    done
+    echo
+    echo
+    echo
+  fi
+fi
 
 deployment_report() {
   #standard deploy folders
@@ -75,7 +99,7 @@ deployment_report() {
           if [ `ls "${deploy_folder}"/ | grep ".sql" | wc -l | xargs` -gt 0 ]
           then
             FS_CHECKSUM='' #initialize empty var
-            if [ "`git rev-parse --abbrev-ref --symbolic-full-name @{u}`" = "${branch_to_compare}" ]
+            if [ "${current_branch}" = "${branch_to_compare}" ]
             then
               FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
 
