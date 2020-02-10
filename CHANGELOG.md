@@ -1,3 +1,14 @@
+## 2020-02-10 Release 1.5.6
+### Summary
+Bug fix, minor new features
+
+### Changes
+  - fix bug that prevented auto deploy folders from working with environment overrides
+  - fix bug in git plugin for auto deploy folders to allow environment overrides
+  - give warning on git plugin when branch is behind master to avoid orphan changes from showing up
+  - validate that files exist in git plugin. Things in master would show up as file not found when comparing branch
+  - add --check-pending which gives a 0 or 1 return code if files need deployed
+
 ## 2019-02-14 Release 1.5.5
 ### Summary
 Add cli override for parameters,fix run as implementation
