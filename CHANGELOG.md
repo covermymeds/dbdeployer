@@ -1,3 +1,11 @@
+## 2020-04-3 Release 1.5.7
+### Summary
+Bug fix
+
+### Changes
+  - fix bug with full path not displaying in some cases for deploy file in auto deploy folders
+  - fix bug that caused confirm flag to not pass through in some cases
+
 ## 2020-02-10 Release 1.5.6
 ### Summary
 Bug fix, minor new features
