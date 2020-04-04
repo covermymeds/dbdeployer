@@ -94,6 +94,7 @@ do
       ;;
     -c|--confirm)
       confirm='true'
+      confirm_cli='-c'
       shift
       ;;
     -C|--checksum-off)

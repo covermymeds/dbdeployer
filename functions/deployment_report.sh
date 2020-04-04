@@ -21,7 +21,7 @@ deployment_report() {
     do
       if ! [ -z "${x}" ]
       then
-        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${confirm_cli}"
         let "pending_count++"
       fi
     done
