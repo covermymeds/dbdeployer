@@ -4,10 +4,12 @@ unset deployment_report
 # variables for git-plugin
 branch_to_compare="${branch_to_compare:-origin/master}"
 current_branch="`git rev-parse --abbrev-ref --symbolic-full-name @{u}`"
+supplemental_path=''
 
 # alert if branch to compare is ahead of current branch
 if [ "${current_branch}" != "${branch_to_compare}" ]
 then
+  supplemental_path="${db_basedir}/"
   check_if_branch_current=`git rev-list --left-right --count ${branch_to_compare}...${current_branch} | awk {'print $1'}`
   #echo "check_if_branch_current: ${check_if_branch_current}"
   if [ $check_if_branch_current -ne 0 ]
@@ -55,7 +57,7 @@ deployment_report() {
         # on master, compare from file system
         FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
       else
-        diff_files=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/[^/]*\.sql$\" | xargs"`
+        diff_files=`eval "git diff --name-status ${branch_to_compare} | grep -E '^A|^M' | awk {'print \$2'} | grep \"^${dbname}/${i}/[^/]*\.sql$\" | xargs"`
 
         #echo "diff_file: ${diff_files}"
 
@@ -78,7 +80,7 @@ deployment_report() {
     do
       if ! [ -z "${x}" ]
       then
-        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${confirm_cli}"
         let "pending_count++"
       fi
     done
@@ -111,7 +113,7 @@ deployment_report() {
               FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
 
             else
-              FS_LIST=`eval "git diff --name-only ${branch_to_compare} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+              FS_LIST=`eval "git diff --name-status ${branch_to_compare} | grep -E '^A|^M' | awk {'print \$2'} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
             fi
 
             for j in ${FS_LIST}
@@ -152,7 +154,7 @@ deployment_report() {
             if ! [ -z "${x}" ]
             then
               auto_deploy_file=`echo ${x} | awk -F '--dbdeployer-md5sum--' {'print $1'}`
-              echo "${script_name} -f "${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
+              echo "${script_name} -f "${supplemental_path}${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${confirm_cli}"
               let "pending_count++"
             fi
           done
