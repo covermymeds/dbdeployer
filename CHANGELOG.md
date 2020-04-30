@@ -1,4 +1,11 @@
-## 2020-04-3 Release 1.5.7
+## 2020-04-30 Release 1.5.8
+### Summary
+Bug fix
+
+### Changes
+  - Fix bug with eval statements wrapping incorrectly when rolled out with bash
+
+## 2020-04-03 Release 1.5.7
 ### Summary
 Bug fix
 

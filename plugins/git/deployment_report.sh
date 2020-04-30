@@ -57,7 +57,7 @@ deployment_report() {
         # on master, compare from file system
         FS=`eval "ls -o1 "${db_basedir}"/"${dbname}"/"${i}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn"`
       else
-        diff_files=`eval "git diff --name-status ${branch_to_compare} | grep -E '^A|^M' | awk {'print \$2'} | grep \"^${dbname}/${i}/[^/]*\.sql$\" | xargs"`
+        diff_files=`git diff --name-status ${branch_to_compare} | grep -E "^A|^M" | awk {'print \$2'} | grep "^${dbname}/${i}/[^/]*\.sql$" | xargs`
 
         #echo "diff_file: ${diff_files}"
 
@@ -113,7 +113,7 @@ deployment_report() {
               FS_LIST=`eval "ls -o1 "${deploy_folder}"/*.sql | awk {'print ${deployment_report_argnum}'} | sort -rn | xargs"`
 
             else
-              FS_LIST=`eval "git diff --name-status ${branch_to_compare} | grep -E '^A|^M' | awk {'print \$2'} | grep \"^${dbname}/${i}/\" | grep '.sql' | xargs"`
+              FS_LIST=`git diff --name-status ${branch_to_compare} | grep -E "^A|^M" | awk {'print \$2'} | grep "^${dbname}/${i}/[^/]*\.sql$" | xargs`
             fi
 
             for j in ${FS_LIST}
