@@ -1,3 +1,10 @@
+## 2020-06-25 Release 1.5.9
+### Summary
+Security Fix
+
+### Changes
+  - Change mssql dbtype to use environment variable instead of passing password on cli
+
 ## 2020-04-30 Release 1.5.8
 ### Summary
 Bug fix
