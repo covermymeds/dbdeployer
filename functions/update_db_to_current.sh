@@ -6,7 +6,8 @@ function update_db_to_current() {
 
   #echo "report_var executes: ${script_name} ${run_as_cli} -D ${db_basedir} -r -d \"${_dbname}\" -n \"${_db_destination_name}\" ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${module_list_cli} ${confirm_cli} | grep \"${script_name} -f\""
 
-  report_var=`${script_name} ${run_as_cli} -D ${db_basedir} -r -d "${_dbname}" -n "${_db_destination_name}" ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${module_list_cli} ${confirm_cli} --variables_to_replace "'${variables_to_replace_cli}'" | grep "${script_name} -f"`
+  report_var=`${script_name} ${run_as_cli} -D ${db_basedir} -r -d "${_dbname}" -n "${_db_destination_name}" -o ${variables_to_replace} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${module_list_cli} ${confirm_cli} | grep "${script_name} -f"`
+
   local IFS=$'\n'
   for j in `echo -e "${report_var}"`
   do

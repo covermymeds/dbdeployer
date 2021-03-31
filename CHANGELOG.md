@@ -1,3 +1,10 @@
+## 2021-03-31 Release 1.5.10
+### Summary
+Bug Fix
+
+### Changes
+  - variables_to_replace did not pass through to sub calls when passed on cli
+
 ## 2020-06-25 Release 1.5.9
 ### Summary
 Security Fix

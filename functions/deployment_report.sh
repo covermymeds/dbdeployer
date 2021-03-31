@@ -21,7 +21,7 @@ deployment_report() {
     do
       if ! [ -z "${x}" ]
       then
-        echo "${script_name} -f "${x}" -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${confirm_cli}" --variables_to_replace "$variables_to_replace_cli"
+        echo "${script_name} -f ${x} -n ${db_destination_name} -o '${variables_to_replace}' ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli} ${confirm_cli}"
         let "pending_count++"
       fi
     done
@@ -81,7 +81,7 @@ deployment_report() {
             if ! [ -z "${x}" ]
             then
               auto_deploy_file=`echo ${x} | awk -F '--dbdeployer-md5sum--' {'print $1'}`
-              echo "${script_name} -f "${auto_deploy_file}" -c -n "${db_destination_name}" ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}" --variables_to_replace "$variables_to_replace_cli"
+              echo "${script_name} -f ${auto_deploy_file} -c -n ${db_destination_name} -o '${variables_to_replace}' ${run_as_cli} ${environment_flag} ${server_cli} ${port_cli} ${dbuser_cli} ${password_cli} ${skip_cli} ${dbtype_cli}"
               let "pending_count++"
             fi
           done
