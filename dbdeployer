@@ -157,7 +157,6 @@ do
     -o|--variables_to_replace)
       shift
       variables_to_replace="${1}"
-      variables_to_replace_cli="${1}"
       shift
       ;;
     -p|--port)
